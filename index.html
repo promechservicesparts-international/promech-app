@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2328">
+<title>Promech Service · Gestión</title>
+<link rel="icon" id="favicon" href="">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Promech">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="application-name" content="Promech">
+<meta name="description" content="Promech Service – clientes, cotizaciones y órdenes de trabajo">
+<style>
+:root{
+  --ch:#1f2328; --ch2:#2b3036; --ch3:#3a4047; --or:#f26b1d; --or2:#d9560c; --or-soft:#fff1e8;
+  --bg:#f2f3f5; --card:#fff; --line:#e2e5e9; --txt:#1f2328; --muted:#6b7280;
+  --red:#c62828; --red-soft:#fdecec; --green:#2e7d32; --green-soft:#e8f5e9; --blue:#1565c0; --blue-soft:#e8f0fb;
+  --amber:#a15c00; --amber-soft:#fff4dc; --grey-soft:#eef0f2; --purple:#6a3fb5; --purple-soft:#f1ebfb;
+  --r:10px; --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
+a{color:var(--or2)}
+h1,h2,h3{font-family:"Barlow Condensed","Roboto Condensed","Arial Narrow","Segoe UI",sans-serif;letter-spacing:.2px;margin:0}
+h1{font-size:28px;font-weight:700}
+h2{font-size:21px;font-weight:700}
+h3{font-size:17px;font-weight:700}
+.muted{color:var(--muted)} .small{font-size:12.5px} .r{text-align:right} .nowrap{white-space:nowrap}
+.pre{white-space:pre-wrap}
+.topbar{background:var(--ch);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 0 var(--or)}
+.topbar-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 18px;padding-top:max(10px,env(safe-area-inset-top))}
+.brand{display:flex;align-items:center;flex:0 0 auto;text-decoration:none}
+.brand svg{height:42px;width:auto;display:block}
+.brand .custom-logo{background:#fff;border-radius:8px;padding:4px 8px;display:flex;align-items:center}
+.brand .custom-logo img{height:32px;max-width:170px;object-fit:contain;display:block}
+.nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:#cfd4da;text-decoration:none;padding:8px 13px;border-radius:8px;font-weight:600;font-size:14.5px;white-space:nowrap}
+.nav a:hover{background:var(--ch2);color:#fff}
+.nav a.active{background:var(--or);color:#fff}
+.container{max-width:1240px;margin:0 auto;padding:22px 18px 40px}
+.foot{max-width:1240px;margin:0 auto;padding:0 18px 28px;color:var(--muted);font-size:12.5px;text-align:center}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.page-head .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-pad{padding:16px 18px}
+.card h2{margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;border-radius:8px;padding:9px 15px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;line-height:1.2;background:var(--grey-soft);color:var(--txt);text-decoration:none;white-space:nowrap}
+.btn:hover{filter:brightness(.96)}
+.btn.primary{background:var(--or);color:#fff}
+.btn.primary:hover{background:var(--or2);filter:none}
+.btn.dark{background:var(--ch);color:#fff}
+.btn.ghost{background:#fff;border-color:var(--line)}
+.btn.danger{background:#fff;border-color:#f1c4c4;color:var(--red)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.xs{padding:4px 8px;font-size:12.5px;border-radius:6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.icon-btn{border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:6px}
+.icon-btn:hover{background:var(--grey-soft);color:var(--txt)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+input,select,textarea{font:inherit;font-size:14.5px;color:var(--txt);background:#fff;border:1px solid #cfd4da;border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(242,107,29,.35);border-color:var(--or)}
+input:disabled{background:var(--grey-soft);color:var(--muted)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:#4b5563;text-transform:uppercase;letter-spacing:.3px}
+label.f > input,label.f > select,label.f > textarea,label.f > div{text-transform:none;letter-spacing:0;font-weight:400}
+.grid{display:grid;gap:12px 14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.span2{grid-column:span 2} .span3{grid-column:span 3} .spanall{grid-column:1/-1}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--txt);cursor:pointer;white-space:nowrap}
+.chk input{width:auto}
+.vat-row{display:flex;align-items:center;gap:8px}
+.vat-row input[type=number]{width:80px}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;margin:18px 0 8px;font-family:inherit}
+.toolbar{display:flex;gap:10px;padding:12px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.toolbar input[type=search]{flex:1 1 240px}
+.toolbar select{flex:0 1 190px;width:auto}
+.table-wrap{overflow-x:auto}
+table.list{width:100%;border-collapse:collapse;font-size:14px}
+table.list th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafbfc;white-space:nowrap}
+table.list td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+table.list tr:last-child td{border-bottom:0}
+table.list tbody tr:hover td{background:#fcfcfd}
+table.list tr.overdue td{background:var(--red-soft)}
+table.list tr.overdue td:first-child{box-shadow:inset 4px 0 0 var(--red)}
+table.list tr.overdue:hover td{background:#fbe1e1}
+.strong{font-weight:600}
+.doc-no{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:600;font-size:13.5px;white-space:nowrap}
+.inline-status{width:auto;padding:4px 8px;font-size:13px;border-radius:999px;font-weight:600}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;background:var(--grey-soft);color:#4b5563}
+.b-prospecto,.b-borrador,.b-recibida,.b-baja{background:var(--grey-soft);color:#4b5563}
+.b-contactado,.b-enviada,.b-en-proceso,.b-normal{background:var(--blue-soft);color:var(--blue)}
+.b-cotizado,.b-lista,.b-alta{background:var(--amber-soft);color:var(--amber)}
+.b-cliente-activo,.b-aceptada,.b-entregada{background:var(--green-soft);color:var(--green)}
+.b-perdido,.b-rechazada{background:var(--red-soft);color:var(--red)}
+.b-control-de-calidad{background:var(--purple-soft);color:var(--purple)}
+.b-urgente,.b-atrasada{background:var(--red);color:#fff}
+.b-ejemplo{background:#fff3c4;color:#7a5b00;border:1px dashed #d9b400}
+.tag-red{color:var(--red);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.stat{padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.stat:hover{border-color:#cdd2d8}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ch3)}
+.stat.or::before{background:var(--or)} .stat.red::before{background:var(--red)} .stat.green::before{background:var(--green)}
+.stat .k{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700}
+.stat .v{font-size:34px;font-weight:800;line-height:1.1;margin-top:4px;font-family:"Barlow Condensed","Roboto Condensed","Arial Narrow",sans-serif}
+.stat.red .v{color:var(--red)}
+.stat .d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.dash-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+.mini-list{list-style:none;margin:0;padding:0}
+.mini-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.mini-list li:last-child{border-bottom:0}
+.mini-list .date{flex:0 0 86px;font-size:13px;font-weight:700}
+.mini-list .grow{flex:1;min-width:0}
+.empty{padding:28px 18px;text-align:center;color:var(--muted)}
+.welcome{padding:26px;display:flex;gap:24px;align-items:center;margin-bottom:18px;background:linear-gradient(120deg,#fff 0%,#fff 60%,var(--or-soft) 100%)}
+.welcome svg{width:84px;height:84px;flex:0 0 auto}
+.welcome .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.backup-note{font-size:13px;color:var(--muted);margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.backup-note.warn{color:var(--amber)}
+body.modal-open{overflow:hidden}
+.modal-backdrop{position:fixed;inset:0;background:rgba(17,20,24,.55);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:4vh 14px;overflow-y:auto}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:720px;box-shadow:0 20px 50px rgba(0,0,0,.3);border-top:4px solid var(--or)}
+.modal.wide{max-width:1000px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.modal-body{padding:16px 18px}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:#fafbfc;border-radius:0 0 12px 12px;position:sticky;bottom:0}
+.items{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.item-head,.item-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 100px 130px 130px 36px;gap:8px;align-items:center;padding:8px 10px}
+.item-head{background:#fafbfc;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}
+.item-row{border-bottom:1px solid var(--line)}
+.item-row:last-child{border-bottom:0}
+.i-amount{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.totals{margin:12px 0 16px auto;max-width:340px;font-variant-numeric:tabular-nums}
+.totals div{display:flex;justify-content:space-between;padding:5px 2px;font-size:14.5px}
+.totals .grand{border-top:2px solid var(--ch);margin-top:4px;padding-top:8px;font-size:18px;font-weight:800}
+.settings-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+.logo-box{border:1px dashed #cfd4da;border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:center;min-height:110px;background:#fafbfc;margin-bottom:10px}
+.logo-box img{max-height:90px;max-width:100%}
+.logo-box svg{height:72px;width:auto;max-width:100%}
+.data-btns{display:flex;flex-direction:column;gap:8px}
+.data-btns .btn{justify-content:flex-start}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ch);color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.25);border-left:4px solid var(--or);max-width:92vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Vista de impresión / PDF */
+#print-root{display:none}
+body.print-mode{background:#d9dce0}
+body.print-mode #app,body.print-mode #modal-root{display:none}
+body.print-mode #print-root{display:block}
+.print-toolbar{position:sticky;top:0;z-index:5;background:var(--ch);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 0 var(--or)}
+.print-toolbar .hint{color:#cfd4da;font-size:13px}
+.sheet{background:#fff;width:210mm;max-width:calc(100% - 24px);min-height:297mm;margin:20px auto;padding:14mm 14mm 12mm;box-shadow:0 6px 30px rgba(0,0,0,.18);color:#1f2328;font-size:12.5px;line-height:1.45;display:flex;flex-direction:column}
+.doc-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-bottom:12px;border-bottom:3px solid var(--or)}
+.doc-logo svg{width:250px;height:auto;display:block}
+.doc-logo img{max-width:250px;max-height:90px;display:block}
+.doc-company{text-align:right;font-size:11.5px;color:#374151}
+.doc-company strong{font-size:15px;color:var(--ch);display:block;font-family:"Barlow Condensed","Roboto Condensed","Arial Narrow",sans-serif;letter-spacing:.3px}
+.doc-titlebar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin:18px 0 14px}
+.doc-titlebar h1{font-size:30px;letter-spacing:2px;color:var(--ch)}
+.doc-titlebar .draft{display:inline-block;margin-left:8px;font-size:11px;letter-spacing:1px;color:var(--red);border:1.5px solid var(--red);padding:2px 6px;border-radius:4px;vertical-align:middle;font-family:"Segoe UI",Arial,sans-serif}
+table.meta{border-collapse:collapse;font-size:12px}
+table.meta td{padding:2px 0 2px 14px}
+table.meta td:first-child{color:#6b7280;text-align:right}
+table.meta td:last-child{font-weight:700;text-align:right}
+.doc-client{background:#f6f7f8;border-left:4px solid var(--ch);padding:10px 14px;margin-bottom:16px}
+.doc-client .label{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;font-weight:700;margin-bottom:2px}
+.doc-client strong{font-size:14px}
+table.doc-items{width:100%;border-collapse:collapse;font-size:12px}
+table.doc-items th{background:var(--ch);color:#fff;text-align:left;padding:7px 8px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+table.doc-items td{padding:7px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+table.doc-items tr:nth-child(even) td{background:#fafafa}
+table.doc-items .r{text-align:right;white-space:nowrap}
+.doc-totals{display:flex;justify-content:flex-end;margin-top:10px}
+.doc-totals table{border-collapse:collapse;min-width:260px;font-size:12.5px}
+.doc-totals td{padding:4px 8px}
+.doc-totals td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.doc-totals tr.grand td{background:var(--or);color:#fff;font-weight:800;font-size:14.5px;padding:8px}
+.doc-block{margin-top:16px;page-break-inside:avoid}
+.doc-block h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--ch);border-bottom:1px solid #e5e7eb;padding-bottom:3px;margin-bottom:6px;font-family:"Segoe UI",Arial,sans-serif}
+.doc-sign{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;page-break-inside:avoid}
+.doc-sign div{border-top:1px solid #9ca3af;padding-top:5px;font-size:11px;color:#6b7280}
+.doc-foot{margin-top:auto;padding-top:14px;border-top:1px solid #e5e7eb;font-size:10.5px;color:#6b7280;text-align:center}
+@media print{
+  @page{size:A4;margin:12mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.print-mode{background:#fff}
+  .no-print,#toast{display:none!important}
+  body.print-mode #app,body.print-mode #modal-root{display:none!important}
+  .sheet{box-shadow:none;margin:0;padding:0;width:auto;max-width:none;min-height:calc(297mm - 26mm)}
+}
+@media (max-width:1050px){
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .dash-grid,.settings-grid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  body{font-size:14.5px}
+  .topbar-inner{flex-direction:column;align-items:stretch;gap:8px;padding:8px 12px}
+  .brand svg{height:32px}
+  .nav{margin-left:0}
+  .nav a{padding:7px 11px;font-size:14px}
+  .nav .long{display:none}
+  .container{padding:16px 12px 32px}
+  h1{font-size:24px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .stat .v{font-size:28px}
+  .g2,.g3,.g4{grid-template-columns:1fr 1fr}
+  .span3{grid-column:1/-1}
+  .toolbar select{flex:1 1 140px}
+  table.list thead{display:none}
+  table.list,table.list tbody,table.list tr,table.list td{display:block;width:100%}
+  table.list tr{border-bottom:1px solid var(--line);padding:8px 4px}
+  table.list tr:last-child{border-bottom:0}
+  table.list td{border:0;padding:4px 10px;display:flex;gap:10px;justify-content:space-between;text-align:right}
+  table.list td::before{content:attr(data-label);font-size:11.5px;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:left;flex:0 0 34%}
+  table.list td > div{text-align:right}
+  table.list td.actions-cell::before{content:none}
+  table.list td.actions-cell .actions{justify-content:flex-start;width:100%;margin-top:4px}
+  table.list tr.overdue td,table.list tr.overdue:hover td{background:transparent}
+  table.list tr.overdue td:first-child{box-shadow:none}
+  table.list tr.overdue{box-shadow:inset 4px 0 0 var(--red);background:var(--red-soft)}
+  .item-head{display:none}
+  .item-row{grid-template-columns:1fr 1fr 1fr 36px;row-gap:6px}
+  .item-row .i-desc{grid-column:1/-1}
+  .item-row .i-amount{grid-column:1/4;text-align:right}
+  .item-row .i-amount::before{content:"Importe: ";color:var(--muted);font-weight:400}
+  .item-row .del{grid-row:3;grid-column:4}
+  .modal-backdrop{padding:0}
+  .modal{border-radius:0;min-height:100%}
+  .modal-foot{border-radius:0}
+  .welcome{flex-direction:column;align-items:flex-start;padding:18px}
+  .sheet{padding:16px;min-height:0;font-size:11.5px;margin:12px auto}
+  .doc-head{flex-direction:column}
+  .doc-company{text-align:left}
+  .doc-logo svg{width:200px}
+  .doc-titlebar{flex-direction:column;gap:8px}
+}
+@media (max-width:420px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .span2{grid-column:auto}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#inicio" id="brand" aria-label="Promech Service – Inicio"></a>
+      <nav class="nav" id="nav">
+        <a href="#inicio" data-view="inicio">Inicio</a>
+        <a href="#clientes" data-view="clientes">Clientes</a>
+        <a href="#cotizaciones" data-view="cotizaciones">Cotizaciones</a>
+        <a href="#ordenes" data-view="ordenes">Órdenes<span class="long"> de trabajo</span></a>
+        <a href="#ajustes" data-view="ajustes">Ajustes</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="container"></main>
+  <div class="foot">Promech Service · Los datos se guardan solo en este navegador. Haga respaldos periódicos en <a href="#ajustes">Ajustes → Exportar datos</a>.</div>
+</div>
+<div id="modal-root"></div>
+<div id="print-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="import-file" accept="application/json,.json" hidden>
+<input type="file" id="logo-file" accept="image/*" hidden>
+<script>
+'use strict';
+/* ===== Logotipos SVG vectoriales (Promech Service) ===== */
+const LOGO_FULL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 801 200\" width=\"1200\" height=\"299\"><title>Promech Service</title><polygon points=\"100.00,4.00 183.14,52.00 183.14,148.00 100.00,196.00 16.86,148.00 16.86,52.00\" fill=\"#1f2328\" stroke=\"#1f2328\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M64 42 H110 A37 37 0 0 1 110 116 H92 V142 L78 162 L64 142 Z M92 64 H110 A15 15 0 0 1 110 94 H92 Z\" fill=\"#f26b1d\" fill-rule=\"evenodd\"/><path d=\"M60 128 L96 116 L96 122 L60 134 Z M60 141 L96 129 L96 135 L60 147 Z\" fill=\"#1f2328\"/><path transform=\"translate(230.11 121.15)\" d=\"M73.856 -61.056000000000004Q73.856 -52.736000000000004 70.08 -46.336Q66.304 -39.936 59.392 -36.480000000000004Q52.480000000000004 -33.024 43.392 -33.024H27.776Q27.136 -33.024 27.136 -32.384V-1.536Q27.136 -0.896 26.688000000000002 -0.448Q26.240000000000002 0.0 25.6 0.0H7.424Q6.784 0.0 6.336 -0.448Q5.888 -0.896 5.888 -1.536V-88.06400000000001Q5.888 -88.70400000000001 6.336 -89.15200000000002Q6.784 -89.60000000000001 7.424 -89.60000000000001H44.416000000000004Q53.120000000000005 -89.60000000000001 59.84 -86.016Q66.56 -82.432 70.208 -75.968Q73.856 -69.504 73.856 -61.056000000000004ZM52.736000000000004 -60.544000000000004Q52.736000000000004 -65.408 49.472 -68.416Q46.208 -71.424 40.96 -71.424H27.776Q27.136 -71.424 27.136 -70.784V-50.56Q27.136 -49.92 27.776 -49.92H40.96Q46.208 -49.92 49.472 -52.864000000000004Q52.736000000000004 -55.808 52.736000000000004 -60.544000000000004ZM130.94400000000002 -1.1520000000000001 115.84 -35.2Q115.584 -35.712 115.072 -35.712H106.624Q105.984 -35.712 105.984 -35.072V-1.536Q105.984 -0.896 105.536 -0.448Q105.088 0.0 104.44800000000001 0.0H86.27199999999999Q85.632 0.0 85.184 -0.448Q84.736 -0.896 84.736 -1.536V-88.06400000000001Q84.736 -88.70400000000001 85.184 -89.15200000000002Q85.632 -89.60000000000001 86.27199999999999 -89.60000000000001H124.288Q132.736 -89.60000000000001 139.136 -86.144Q145.536 -82.688 149.05599999999998 -76.352Q152.576 -70.016 152.576 -61.824Q152.576 -53.248000000000005 148.35199999999998 -46.976Q144.128 -40.704 136.576 -37.888Q135.936 -37.632 136.192 -36.992L153.088 -1.792Q153.344 -1.28 153.344 -1.024Q153.344 0.0 151.936 0.0H132.736Q131.45600000000002 0.0 130.94400000000002 -1.1520000000000001ZM105.984 -70.784V-52.608000000000004Q105.984 -51.968 106.624 -51.968H120.832Q125.568 -51.968 128.512 -54.592Q131.45600000000002 -57.216 131.45600000000002 -61.568Q131.45600000000002 -66.048 128.512 -68.736Q125.568 -71.424 120.832 -71.424H106.624Q105.984 -71.424 105.984 -70.784ZM163.84 -32.0V-57.6Q163.84 -67.328 168.192 -74.816Q172.544 -82.304 180.416 -86.464Q188.288 -90.624 198.656 -90.624Q209.024 -90.624 216.96 -86.464Q224.89600000000002 -82.304 229.248 -74.816Q233.6 -67.328 233.6 -57.6V-32.0Q233.6 -22.016000000000002 229.248 -14.464Q224.89600000000002 -6.912 216.96 -2.752Q209.024 1.408 198.656 1.408Q188.288 1.408 180.416 -2.752Q172.544 -6.912 168.192 -14.464Q163.84 -22.016000000000002 163.84 -32.0ZM212.352 -31.36V-57.856Q212.352 -64.384 208.57600000000002 -68.416Q204.8 -72.44800000000001 198.656 -72.44800000000001Q192.64 -72.44800000000001 188.86399999999998 -68.416Q185.088 -64.384 185.088 -57.856V-31.36Q185.088 -24.704 188.86399999999998 -20.736Q192.64 -16.768 198.656 -16.768Q204.8 -16.768 208.57600000000002 -20.736Q212.352 -24.704 212.352 -31.36ZM305.92 -89.60000000000001H323.968Q324.608 -89.60000000000001 325.05600000000004 -89.15200000000002Q325.504 -88.70400000000001 325.504 -88.06400000000001V-1.536Q325.504 -0.896 325.05600000000004 -0.448Q324.608 0.0 323.968 0.0H305.79200000000003Q305.15200000000004 0.0 304.70400000000006 -0.448Q304.25600000000003 -0.896 304.25600000000003 -1.536V-52.992000000000004Q304.25600000000003 -53.504 304.0 -53.504Q303.744 -53.504 303.488 -53.120000000000005L292.48 -35.456Q291.968 -34.432 290.688 -34.432H281.6Q280.32 -34.432 279.808 -35.456L268.672 -53.248000000000005Q268.416 -53.632 268.15999999999997 -53.632Q267.904 -53.632 267.904 -53.120000000000005V-1.536Q267.904 -0.896 267.456 -0.448Q267.00800000000004 0.0 266.368 0.0H248.192Q247.55200000000002 0.0 247.104 -0.448Q246.656 -0.896 246.656 -1.536V-88.06400000000001Q246.656 -88.70400000000001 247.104 -89.15200000000002Q247.55200000000002 -89.60000000000001 248.192 -89.60000000000001H266.24Q267.392 -89.60000000000001 268.03200000000004 -88.57600000000001L285.824 -60.672000000000004Q286.208 -59.904 286.592 -60.672000000000004L304.12800000000004 -88.57600000000001Q304.64 -89.60000000000001 305.92 -89.60000000000001ZM402.048 -71.424H361.85600000000005Q361.216 -71.424 361.216 -70.784V-55.04Q361.216 -54.4 361.85600000000005 -54.4H387.584Q388.22400000000005 -54.4 388.672 -53.952Q389.12 -53.504 389.12 -52.864000000000004V-37.888Q389.12 -37.248 388.672 -36.8Q388.22400000000005 -36.352000000000004 387.584 -36.352000000000004H361.85600000000005Q361.216 -36.352000000000004 361.216 -35.712V-18.816Q361.216 -18.176000000000002 361.85600000000005 -18.176000000000002H402.048Q402.68800000000005 -18.176000000000002 403.1360000000001 -17.728Q403.58400000000006 -17.28 403.58400000000006 -16.64V-1.536Q403.58400000000006 -0.896 403.1360000000001 -0.448Q402.68800000000005 0.0 402.048 0.0H341.504Q340.86400000000003 0.0 340.41600000000005 -0.448Q339.968 -0.896 339.968 -1.536V-88.06400000000001Q339.968 -88.70400000000001 340.41600000000005 -89.15200000000002Q340.86400000000003 -89.60000000000001 341.504 -89.60000000000001H402.048Q402.68800000000005 -89.60000000000001 403.1360000000001 -89.15200000000002Q403.58400000000006 -88.70400000000001 403.58400000000006 -88.06400000000001V-72.96000000000001Q403.58400000000006 -72.32000000000001 403.1360000000001 -71.87200000000001Q402.68800000000005 -71.424 402.048 -71.424ZM414.336 -31.104V-58.752Q414.336 -68.224 418.624 -75.456Q422.91200000000003 -82.688 430.65600000000006 -86.656Q438.40000000000003 -90.624 448.64000000000004 -90.624Q458.88000000000005 -90.624 466.624 -86.848Q474.36800000000005 -83.072 478.65600000000006 -76.224Q482.9440000000001 -69.376 482.9440000000001 -60.416000000000004Q482.9440000000001 -59.776 482.4960000000001 -59.392Q482.04800000000006 -59.008 481.408 -59.008L463.232 -57.856Q461.696 -57.856 461.696 -59.264Q461.696 -65.28 458.112 -68.864Q454.528 -72.44800000000001 448.64000000000004 -72.44800000000001Q442.75200000000007 -72.44800000000001 439.16800000000006 -68.80000000000001Q435.58400000000006 -65.152 435.58400000000006 -59.264V-30.208000000000002Q435.58400000000006 -24.32 439.16800000000006 -20.736Q442.75200000000007 -17.152 448.64000000000004 -17.152Q454.528 -17.152 458.112 -20.736Q461.696 -24.32 461.696 -30.208000000000002Q461.696 -31.616 463.232 -31.616L481.408 -30.72Q482.04800000000006 -30.72 482.4960000000001 -30.336Q482.9440000000001 -29.952 482.9440000000001 -29.44Q482.9440000000001 -20.352 478.65600000000006 -13.440000000000001Q474.36800000000005 -6.5280000000000005 466.624 -2.7520000000000002Q458.88000000000005 1.024 448.64000000000004 1.024Q438.40000000000003 1.024 430.65600000000006 -2.944Q422.91200000000003 -6.912 418.624 -14.208Q414.336 -21.504 414.336 -31.104ZM543.6160000000001 -89.60000000000001H561.792Q562.432 -89.60000000000001 562.8800000000001 -89.15200000000002Q563.3280000000001 -88.70400000000001 563.3280000000001 -88.06400000000001V-1.536Q563.3280000000001 -0.896 562.8800000000001 -0.448Q562.432 0.0 561.792 0.0H543.6160000000001Q542.976 0.0 542.528 -0.448Q542.08 -0.896 542.08 -1.536V-35.584Q542.08 -36.224000000000004 541.44 -36.224000000000004H517.504Q516.864 -36.224000000000004 516.864 -35.584V-1.536Q516.864 -0.896 516.416 -0.448Q515.9680000000001 0.0 515.3280000000001 0.0H497.15200000000004Q496.51200000000006 0.0 496.0640000000001 -0.448Q495.61600000000004 -0.896 495.61600000000004 -1.536V-88.06400000000001Q495.61600000000004 -88.70400000000001 496.0640000000001 -89.15200000000002Q496.51200000000006 -89.60000000000001 497.15200000000004 -89.60000000000001H515.3280000000001Q515.9680000000001 -89.60000000000001 516.416 -89.15200000000002Q516.864 -88.70400000000001 516.864 -88.06400000000001V-55.04Q516.864 -54.4 517.504 -54.4H541.44Q542.08 -54.4 542.08 -55.04V-88.06400000000001Q542.08 -88.70400000000001 542.528 -89.15200000000002Q542.976 -89.60000000000001 543.6160000000001 -89.60000000000001Z\" fill=\"#1f2328\"/><path transform=\"translate(234.32 169.47)\" d=\"M1.68 -7.72V-8.72Q1.68 -8.92 1.8199999999999998 -9.06Q1.96 -9.200000000000001 2.16 -9.200000000000001H5.72Q5.92 -9.200000000000001 6.0600000000000005 -9.06Q6.2 -8.92 6.2 -8.72V-7.96Q6.2 -6.12 7.84 -4.9Q9.48 -3.68 12.32 -3.68Q14.76 -3.68 16.0 -4.72Q17.240000000000002 -5.76 17.240000000000002 -7.4Q17.240000000000002 -8.52 16.560000000000002 -9.3Q15.88 -10.08 14.620000000000001 -10.719999999999999Q13.36 -11.36 10.84 -12.32Q8.0 -13.36 6.24 -14.280000000000001Q4.48 -15.200000000000001 3.3000000000000003 -16.78Q2.12 -18.36 2.12 -20.72Q2.12 -24.240000000000002 4.68 -26.28Q7.24 -28.32 11.52 -28.32Q14.52 -28.32 16.82 -27.28Q19.12 -26.240000000000002 20.4 -24.380000000000003Q21.68 -22.52 21.68 -20.080000000000002V-19.400000000000002Q21.68 -19.2 21.54 -19.060000000000002Q21.400000000000002 -18.92 21.2 -18.92H17.6Q17.400000000000002 -18.92 17.26 -19.060000000000002Q17.12 -19.2 17.12 -19.400000000000002V-19.84Q17.12 -21.72 15.580000000000002 -23.02Q14.040000000000001 -24.32 11.32 -24.32Q9.120000000000001 -24.32 7.9 -23.4Q6.68 -22.48 6.68 -20.8Q6.68 -19.6 7.32 -18.840000000000003Q7.96 -18.080000000000002 9.24 -17.46Q10.52 -16.84 13.200000000000001 -15.88Q16.04 -14.8 17.740000000000002 -13.920000000000002Q19.44 -13.040000000000001 20.66 -11.46Q21.88 -9.88 21.88 -7.5200000000000005Q21.88 -3.92 19.22 -1.8Q16.56 0.32 11.96 0.32Q8.84 0.32 6.52 -0.6799999999999999Q4.2 -1.68 2.94 -3.48Q1.68 -5.28 1.68 -7.72ZM112.74000000000001 -24.0H99.10000000000001Q98.9 -24.0 98.9 -23.8V-16.32Q98.9 -16.12 99.10000000000001 -16.12H108.26Q108.46000000000001 -16.12 108.60000000000001 -15.98Q108.74000000000001 -15.84 108.74000000000001 -15.64V-12.6Q108.74000000000001 -12.4 108.60000000000001 -12.260000000000002Q108.46000000000001 -12.120000000000001 108.26 -12.120000000000001H99.10000000000001Q98.9 -12.120000000000001 98.9 -11.92V-4.2Q98.9 -4.0 99.10000000000001 -4.0H112.74000000000001Q112.94 -4.0 113.08 -3.8600000000000003Q113.22 -3.72 113.22 -3.52V-0.48Q113.22 -0.28 113.08 -0.14Q112.94 0.0 112.74000000000001 0.0H94.74000000000001Q94.54 0.0 94.4 -0.14Q94.26 -0.28 94.26 -0.48V-27.52Q94.26 -27.72 94.4 -27.86Q94.54 -28.0 94.74000000000001 -28.0H112.74000000000001Q112.94 -28.0 113.08 -27.86Q113.22 -27.72 113.22 -27.52V-24.48Q113.22 -24.28 113.08 -24.14Q112.94 -24.0 112.74000000000001 -24.0ZM200.8 -0.36 195.52 -11.88Q195.44 -12.040000000000001 195.28 -12.040000000000001H190.48Q190.28 -12.040000000000001 190.28 -11.84V-0.48Q190.28 -0.28 190.14 -0.14Q190.0 0.0 189.8 0.0H186.12Q185.92 0.0 185.77999999999997 -0.14Q185.64 -0.28 185.64 -0.48V-27.52Q185.64 -27.72 185.77999999999997 -27.86Q185.92 -28.0 186.12 -28.0H197.12Q199.56 -28.0 201.44 -26.98Q203.32 -25.96 204.36 -24.1Q205.4 -22.240000000000002 205.4 -19.84Q205.4 -17.080000000000002 203.98000000000002 -15.14Q202.56 -13.200000000000001 200.04 -12.44Q199.96 -12.44 199.92000000000002 -12.36Q199.88 -12.280000000000001 199.92 -12.200000000000001L205.56 -0.56Q205.64 -0.4 205.64 -0.32Q205.64 0.0 205.2 0.0H201.36Q200.96 0.0 200.8 -0.36ZM190.28 -23.8V-15.84Q190.28 -15.64 190.48 -15.64H196.48Q198.4 -15.64 199.57999999999998 -16.78Q200.76 -17.92 200.76 -19.8Q200.76 -21.68 199.57999999999998 -22.84Q198.4 -24.0 196.48 -24.0H190.48Q190.28 -24.0 190.28 -23.8ZM284.58 -0.4 276.18 -27.44 276.14 -27.6Q276.14 -28.0 276.58 -28.0H280.54Q280.98 -28.0 281.1 -27.6L287.1 -6.72Q287.14 -6.6000000000000005 287.22 -6.6000000000000005Q287.3 -6.6000000000000005 287.34 -6.72L293.3 -27.6Q293.42 -28.0 293.86 -28.0H297.74Q297.98 -28.0 298.1 -27.84Q298.22 -27.68 298.14 -27.44L289.62 -0.4Q289.5 0.0 289.1 0.0H285.1Q284.7 0.0 284.58 -0.4ZM369.96000000000004 -0.48V-27.52Q369.96000000000004 -27.72 370.1 -27.86Q370.24 -28.0 370.44 -28.0H374.12Q374.32 -28.0 374.46000000000004 -27.86Q374.6 -27.72 374.6 -27.52V-0.48Q374.6 -0.28 374.46000000000004 -0.14Q374.32 0.0 374.12 0.0H370.44Q370.24 0.0 370.1 -0.14Q369.96000000000004 -0.28 369.96000000000004 -0.48ZM447.46000000000004 -9.08V-18.96Q447.46000000000004 -21.76 448.70000000000005 -23.880000000000003Q449.94000000000005 -26.0 452.22 -27.16Q454.5 -28.32 457.5 -28.32Q460.46000000000004 -28.32 462.74 -27.200000000000003Q465.02000000000004 -26.080000000000002 466.26 -24.04Q467.5 -22.0 467.5 -19.32Q467.5 -19.12 467.36 -18.98Q467.22 -18.84 467.02000000000004 -18.84L463.34000000000003 -18.64Q462.86 -18.64 462.86 -19.080000000000002Q462.86 -21.44 461.40000000000003 -22.880000000000003Q459.94000000000005 -24.32 457.5 -24.32Q455.06 -24.32 453.58000000000004 -22.880000000000003Q452.1 -21.44 452.1 -19.080000000000002V-8.88Q452.1 -6.5600000000000005 453.58000000000004 -5.12Q455.06 -3.68 457.5 -3.68Q459.94000000000005 -3.68 461.40000000000003 -5.1000000000000005Q462.86 -6.5200000000000005 462.86 -8.88Q462.86 -9.32 463.34000000000003 -9.32L467.02000000000004 -9.16Q467.22 -9.16 467.36 -9.04Q467.5 -8.92 467.5 -8.76Q467.5 -6.04 466.26 -3.98Q465.02000000000004 -1.92 462.74 -0.7999999999999999Q460.46000000000004 0.32 457.5 0.32Q454.5 0.32 452.22 -0.86Q449.94000000000005 -2.04 448.70000000000005 -4.16Q447.46000000000004 -6.28 447.46000000000004 -9.08ZM558.64 -24.0H545.0Q544.8 -24.0 544.8 -23.8V-16.32Q544.8 -16.12 545.0 -16.12H554.16Q554.36 -16.12 554.5 -15.98Q554.64 -15.84 554.64 -15.64V-12.6Q554.64 -12.4 554.5 -12.260000000000002Q554.36 -12.120000000000001 554.16 -12.120000000000001H545.0Q544.8 -12.120000000000001 544.8 -11.92V-4.2Q544.8 -4.0 545.0 -4.0H558.64Q558.84 -4.0 558.98 -3.8600000000000003Q559.12 -3.72 559.12 -3.52V-0.48Q559.12 -0.28 558.98 -0.14Q558.84 0.0 558.64 0.0H540.64Q540.44 0.0 540.3 -0.14Q540.16 -0.28 540.16 -0.48V-27.52Q540.16 -27.72 540.3 -27.86Q540.44 -28.0 540.64 -28.0H558.64Q558.84 -28.0 558.98 -27.86Q559.12 -27.72 559.12 -27.52V-24.48Q559.12 -24.28 558.98 -24.14Q558.84 -24.0 558.64 -24.0Z\" fill=\"#f26b1d\"/></svg>";
+const LOGO_REV  = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 801 200\" width=\"1200\" height=\"299\"><title>Promech Service</title><polygon points=\"100.00,4.00 183.14,52.00 183.14,148.00 100.00,196.00 16.86,148.00 16.86,52.00\" fill=\"#f26b1d\" stroke=\"#f26b1d\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M64 42 H110 A37 37 0 0 1 110 116 H92 V142 L78 162 L64 142 Z M92 64 H110 A15 15 0 0 1 110 94 H92 Z\" fill=\"#1f2328\" fill-rule=\"evenodd\"/><path d=\"M60 128 L96 116 L96 122 L60 134 Z M60 141 L96 129 L96 135 L60 147 Z\" fill=\"#f26b1d\"/><path transform=\"translate(230.11 121.15)\" d=\"M73.856 -61.056000000000004Q73.856 -52.736000000000004 70.08 -46.336Q66.304 -39.936 59.392 -36.480000000000004Q52.480000000000004 -33.024 43.392 -33.024H27.776Q27.136 -33.024 27.136 -32.384V-1.536Q27.136 -0.896 26.688000000000002 -0.448Q26.240000000000002 0.0 25.6 0.0H7.424Q6.784 0.0 6.336 -0.448Q5.888 -0.896 5.888 -1.536V-88.06400000000001Q5.888 -88.70400000000001 6.336 -89.15200000000002Q6.784 -89.60000000000001 7.424 -89.60000000000001H44.416000000000004Q53.120000000000005 -89.60000000000001 59.84 -86.016Q66.56 -82.432 70.208 -75.968Q73.856 -69.504 73.856 -61.056000000000004ZM52.736000000000004 -60.544000000000004Q52.736000000000004 -65.408 49.472 -68.416Q46.208 -71.424 40.96 -71.424H27.776Q27.136 -71.424 27.136 -70.784V-50.56Q27.136 -49.92 27.776 -49.92H40.96Q46.208 -49.92 49.472 -52.864000000000004Q52.736000000000004 -55.808 52.736000000000004 -60.544000000000004ZM130.94400000000002 -1.1520000000000001 115.84 -35.2Q115.584 -35.712 115.072 -35.712H106.624Q105.984 -35.712 105.984 -35.072V-1.536Q105.984 -0.896 105.536 -0.448Q105.088 0.0 104.44800000000001 0.0H86.27199999999999Q85.632 0.0 85.184 -0.448Q84.736 -0.896 84.736 -1.536V-88.06400000000001Q84.736 -88.70400000000001 85.184 -89.15200000000002Q85.632 -89.60000000000001 86.27199999999999 -89.60000000000001H124.288Q132.736 -89.60000000000001 139.136 -86.144Q145.536 -82.688 149.05599999999998 -76.352Q152.576 -70.016 152.576 -61.824Q152.576 -53.248000000000005 148.35199999999998 -46.976Q144.128 -40.704 136.576 -37.888Q135.936 -37.632 136.192 -36.992L153.088 -1.792Q153.344 -1.28 153.344 -1.024Q153.344 0.0 151.936 0.0H132.736Q131.45600000000002 0.0 130.94400000000002 -1.1520000000000001ZM105.984 -70.784V-52.608000000000004Q105.984 -51.968 106.624 -51.968H120.832Q125.568 -51.968 128.512 -54.592Q131.45600000000002 -57.216 131.45600000000002 -61.568Q131.45600000000002 -66.048 128.512 -68.736Q125.568 -71.424 120.832 -71.424H106.624Q105.984 -71.424 105.984 -70.784ZM163.84 -32.0V-57.6Q163.84 -67.328 168.192 -74.816Q172.544 -82.304 180.416 -86.464Q188.288 -90.624 198.656 -90.624Q209.024 -90.624 216.96 -86.464Q224.89600000000002 -82.304 229.248 -74.816Q233.6 -67.328 233.6 -57.6V-32.0Q233.6 -22.016000000000002 229.248 -14.464Q224.89600000000002 -6.912 216.96 -2.752Q209.024 1.408 198.656 1.408Q188.288 1.408 180.416 -2.752Q172.544 -6.912 168.192 -14.464Q163.84 -22.016000000000002 163.84 -32.0ZM212.352 -31.36V-57.856Q212.352 -64.384 208.57600000000002 -68.416Q204.8 -72.44800000000001 198.656 -72.44800000000001Q192.64 -72.44800000000001 188.86399999999998 -68.416Q185.088 -64.384 185.088 -57.856V-31.36Q185.088 -24.704 188.86399999999998 -20.736Q192.64 -16.768 198.656 -16.768Q204.8 -16.768 208.57600000000002 -20.736Q212.352 -24.704 212.352 -31.36ZM305.92 -89.60000000000001H323.968Q324.608 -89.60000000000001 325.05600000000004 -89.15200000000002Q325.504 -88.70400000000001 325.504 -88.06400000000001V-1.536Q325.504 -0.896 325.05600000000004 -0.448Q324.608 0.0 323.968 0.0H305.79200000000003Q305.15200000000004 0.0 304.70400000000006 -0.448Q304.25600000000003 -0.896 304.25600000000003 -1.536V-52.992000000000004Q304.25600000000003 -53.504 304.0 -53.504Q303.744 -53.504 303.488 -53.120000000000005L292.48 -35.456Q291.968 -34.432 290.688 -34.432H281.6Q280.32 -34.432 279.808 -35.456L268.672 -53.248000000000005Q268.416 -53.632 268.15999999999997 -53.632Q267.904 -53.632 267.904 -53.120000000000005V-1.536Q267.904 -0.896 267.456 -0.448Q267.00800000000004 0.0 266.368 0.0H248.192Q247.55200000000002 0.0 247.104 -0.448Q246.656 -0.896 246.656 -1.536V-88.06400000000001Q246.656 -88.70400000000001 247.104 -89.15200000000002Q247.55200000000002 -89.60000000000001 248.192 -89.60000000000001H266.24Q267.392 -89.60000000000001 268.03200000000004 -88.57600000000001L285.824 -60.672000000000004Q286.208 -59.904 286.592 -60.672000000000004L304.12800000000004 -88.57600000000001Q304.64 -89.60000000000001 305.92 -89.60000000000001ZM402.048 -71.424H361.85600000000005Q361.216 -71.424 361.216 -70.784V-55.04Q361.216 -54.4 361.85600000000005 -54.4H387.584Q388.22400000000005 -54.4 388.672 -53.952Q389.12 -53.504 389.12 -52.864000000000004V-37.888Q389.12 -37.248 388.672 -36.8Q388.22400000000005 -36.352000000000004 387.584 -36.352000000000004H361.85600000000005Q361.216 -36.352000000000004 361.216 -35.712V-18.816Q361.216 -18.176000000000002 361.85600000000005 -18.176000000000002H402.048Q402.68800000000005 -18.176000000000002 403.1360000000001 -17.728Q403.58400000000006 -17.28 403.58400000000006 -16.64V-1.536Q403.58400000000006 -0.896 403.1360000000001 -0.448Q402.68800000000005 0.0 402.048 0.0H341.504Q340.86400000000003 0.0 340.41600000000005 -0.448Q339.968 -0.896 339.968 -1.536V-88.06400000000001Q339.968 -88.70400000000001 340.41600000000005 -89.15200000000002Q340.86400000000003 -89.60000000000001 341.504 -89.60000000000001H402.048Q402.68800000000005 -89.60000000000001 403.1360000000001 -89.15200000000002Q403.58400000000006 -88.70400000000001 403.58400000000006 -88.06400000000001V-72.96000000000001Q403.58400000000006 -72.32000000000001 403.1360000000001 -71.87200000000001Q402.68800000000005 -71.424 402.048 -71.424ZM414.336 -31.104V-58.752Q414.336 -68.224 418.624 -75.456Q422.91200000000003 -82.688 430.65600000000006 -86.656Q438.40000000000003 -90.624 448.64000000000004 -90.624Q458.88000000000005 -90.624 466.624 -86.848Q474.36800000000005 -83.072 478.65600000000006 -76.224Q482.9440000000001 -69.376 482.9440000000001 -60.416000000000004Q482.9440000000001 -59.776 482.4960000000001 -59.392Q482.04800000000006 -59.008 481.408 -59.008L463.232 -57.856Q461.696 -57.856 461.696 -59.264Q461.696 -65.28 458.112 -68.864Q454.528 -72.44800000000001 448.64000000000004 -72.44800000000001Q442.75200000000007 -72.44800000000001 439.16800000000006 -68.80000000000001Q435.58400000000006 -65.152 435.58400000000006 -59.264V-30.208000000000002Q435.58400000000006 -24.32 439.16800000000006 -20.736Q442.75200000000007 -17.152 448.64000000000004 -17.152Q454.528 -17.152 458.112 -20.736Q461.696 -24.32 461.696 -30.208000000000002Q461.696 -31.616 463.232 -31.616L481.408 -30.72Q482.04800000000006 -30.72 482.4960000000001 -30.336Q482.9440000000001 -29.952 482.9440000000001 -29.44Q482.9440000000001 -20.352 478.65600000000006 -13.440000000000001Q474.36800000000005 -6.5280000000000005 466.624 -2.7520000000000002Q458.88000000000005 1.024 448.64000000000004 1.024Q438.40000000000003 1.024 430.65600000000006 -2.944Q422.91200000000003 -6.912 418.624 -14.208Q414.336 -21.504 414.336 -31.104ZM543.6160000000001 -89.60000000000001H561.792Q562.432 -89.60000000000001 562.8800000000001 -89.15200000000002Q563.3280000000001 -88.70400000000001 563.3280000000001 -88.06400000000001V-1.536Q563.3280000000001 -0.896 562.8800000000001 -0.448Q562.432 0.0 561.792 0.0H543.6160000000001Q542.976 0.0 542.528 -0.448Q542.08 -0.896 542.08 -1.536V-35.584Q542.08 -36.224000000000004 541.44 -36.224000000000004H517.504Q516.864 -36.224000000000004 516.864 -35.584V-1.536Q516.864 -0.896 516.416 -0.448Q515.9680000000001 0.0 515.3280000000001 0.0H497.15200000000004Q496.51200000000006 0.0 496.0640000000001 -0.448Q495.61600000000004 -0.896 495.61600000000004 -1.536V-88.06400000000001Q495.61600000000004 -88.70400000000001 496.0640000000001 -89.15200000000002Q496.51200000000006 -89.60000000000001 497.15200000000004 -89.60000000000001H515.3280000000001Q515.9680000000001 -89.60000000000001 516.416 -89.15200000000002Q516.864 -88.70400000000001 516.864 -88.06400000000001V-55.04Q516.864 -54.4 517.504 -54.4H541.44Q542.08 -54.4 542.08 -55.04V-88.06400000000001Q542.08 -88.70400000000001 542.528 -89.15200000000002Q542.976 -89.60000000000001 543.6160000000001 -89.60000000000001Z\" fill=\"#fff\"/><path transform=\"translate(234.32 169.47)\" d=\"M1.68 -7.72V-8.72Q1.68 -8.92 1.8199999999999998 -9.06Q1.96 -9.200000000000001 2.16 -9.200000000000001H5.72Q5.92 -9.200000000000001 6.0600000000000005 -9.06Q6.2 -8.92 6.2 -8.72V-7.96Q6.2 -6.12 7.84 -4.9Q9.48 -3.68 12.32 -3.68Q14.76 -3.68 16.0 -4.72Q17.240000000000002 -5.76 17.240000000000002 -7.4Q17.240000000000002 -8.52 16.560000000000002 -9.3Q15.88 -10.08 14.620000000000001 -10.719999999999999Q13.36 -11.36 10.84 -12.32Q8.0 -13.36 6.24 -14.280000000000001Q4.48 -15.200000000000001 3.3000000000000003 -16.78Q2.12 -18.36 2.12 -20.72Q2.12 -24.240000000000002 4.68 -26.28Q7.24 -28.32 11.52 -28.32Q14.52 -28.32 16.82 -27.28Q19.12 -26.240000000000002 20.4 -24.380000000000003Q21.68 -22.52 21.68 -20.080000000000002V-19.400000000000002Q21.68 -19.2 21.54 -19.060000000000002Q21.400000000000002 -18.92 21.2 -18.92H17.6Q17.400000000000002 -18.92 17.26 -19.060000000000002Q17.12 -19.2 17.12 -19.400000000000002V-19.84Q17.12 -21.72 15.580000000000002 -23.02Q14.040000000000001 -24.32 11.32 -24.32Q9.120000000000001 -24.32 7.9 -23.4Q6.68 -22.48 6.68 -20.8Q6.68 -19.6 7.32 -18.840000000000003Q7.96 -18.080000000000002 9.24 -17.46Q10.52 -16.84 13.200000000000001 -15.88Q16.04 -14.8 17.740000000000002 -13.920000000000002Q19.44 -13.040000000000001 20.66 -11.46Q21.88 -9.88 21.88 -7.5200000000000005Q21.88 -3.92 19.22 -1.8Q16.56 0.32 11.96 0.32Q8.84 0.32 6.52 -0.6799999999999999Q4.2 -1.68 2.94 -3.48Q1.68 -5.28 1.68 -7.72ZM112.74000000000001 -24.0H99.10000000000001Q98.9 -24.0 98.9 -23.8V-16.32Q98.9 -16.12 99.10000000000001 -16.12H108.26Q108.46000000000001 -16.12 108.60000000000001 -15.98Q108.74000000000001 -15.84 108.74000000000001 -15.64V-12.6Q108.74000000000001 -12.4 108.60000000000001 -12.260000000000002Q108.46000000000001 -12.120000000000001 108.26 -12.120000000000001H99.10000000000001Q98.9 -12.120000000000001 98.9 -11.92V-4.2Q98.9 -4.0 99.10000000000001 -4.0H112.74000000000001Q112.94 -4.0 113.08 -3.8600000000000003Q113.22 -3.72 113.22 -3.52V-0.48Q113.22 -0.28 113.08 -0.14Q112.94 0.0 112.74000000000001 0.0H94.74000000000001Q94.54 0.0 94.4 -0.14Q94.26 -0.28 94.26 -0.48V-27.52Q94.26 -27.72 94.4 -27.86Q94.54 -28.0 94.74000000000001 -28.0H112.74000000000001Q112.94 -28.0 113.08 -27.86Q113.22 -27.72 113.22 -27.52V-24.48Q113.22 -24.28 113.08 -24.14Q112.94 -24.0 112.74000000000001 -24.0ZM200.8 -0.36 195.52 -11.88Q195.44 -12.040000000000001 195.28 -12.040000000000001H190.48Q190.28 -12.040000000000001 190.28 -11.84V-0.48Q190.28 -0.28 190.14 -0.14Q190.0 0.0 189.8 0.0H186.12Q185.92 0.0 185.77999999999997 -0.14Q185.64 -0.28 185.64 -0.48V-27.52Q185.64 -27.72 185.77999999999997 -27.86Q185.92 -28.0 186.12 -28.0H197.12Q199.56 -28.0 201.44 -26.98Q203.32 -25.96 204.36 -24.1Q205.4 -22.240000000000002 205.4 -19.84Q205.4 -17.080000000000002 203.98000000000002 -15.14Q202.56 -13.200000000000001 200.04 -12.44Q199.96 -12.44 199.92000000000002 -12.36Q199.88 -12.280000000000001 199.92 -12.200000000000001L205.56 -0.56Q205.64 -0.4 205.64 -0.32Q205.64 0.0 205.2 0.0H201.36Q200.96 0.0 200.8 -0.36ZM190.28 -23.8V-15.84Q190.28 -15.64 190.48 -15.64H196.48Q198.4 -15.64 199.57999999999998 -16.78Q200.76 -17.92 200.76 -19.8Q200.76 -21.68 199.57999999999998 -22.84Q198.4 -24.0 196.48 -24.0H190.48Q190.28 -24.0 190.28 -23.8ZM284.58 -0.4 276.18 -27.44 276.14 -27.6Q276.14 -28.0 276.58 -28.0H280.54Q280.98 -28.0 281.1 -27.6L287.1 -6.72Q287.14 -6.6000000000000005 287.22 -6.6000000000000005Q287.3 -6.6000000000000005 287.34 -6.72L293.3 -27.6Q293.42 -28.0 293.86 -28.0H297.74Q297.98 -28.0 298.1 -27.84Q298.22 -27.68 298.14 -27.44L289.62 -0.4Q289.5 0.0 289.1 0.0H285.1Q284.7 0.0 284.58 -0.4ZM369.96000000000004 -0.48V-27.52Q369.96000000000004 -27.72 370.1 -27.86Q370.24 -28.0 370.44 -28.0H374.12Q374.32 -28.0 374.46000000000004 -27.86Q374.6 -27.72 374.6 -27.52V-0.48Q374.6 -0.28 374.46000000000004 -0.14Q374.32 0.0 374.12 0.0H370.44Q370.24 0.0 370.1 -0.14Q369.96000000000004 -0.28 369.96000000000004 -0.48ZM447.46000000000004 -9.08V-18.96Q447.46000000000004 -21.76 448.70000000000005 -23.880000000000003Q449.94000000000005 -26.0 452.22 -27.16Q454.5 -28.32 457.5 -28.32Q460.46000000000004 -28.32 462.74 -27.200000000000003Q465.02000000000004 -26.080000000000002 466.26 -24.04Q467.5 -22.0 467.5 -19.32Q467.5 -19.12 467.36 -18.98Q467.22 -18.84 467.02000000000004 -18.84L463.34000000000003 -18.64Q462.86 -18.64 462.86 -19.080000000000002Q462.86 -21.44 461.40000000000003 -22.880000000000003Q459.94000000000005 -24.32 457.5 -24.32Q455.06 -24.32 453.58000000000004 -22.880000000000003Q452.1 -21.44 452.1 -19.080000000000002V-8.88Q452.1 -6.5600000000000005 453.58000000000004 -5.12Q455.06 -3.68 457.5 -3.68Q459.94000000000005 -3.68 461.40000000000003 -5.1000000000000005Q462.86 -6.5200000000000005 462.86 -8.88Q462.86 -9.32 463.34000000000003 -9.32L467.02000000000004 -9.16Q467.22 -9.16 467.36 -9.04Q467.5 -8.92 467.5 -8.76Q467.5 -6.04 466.26 -3.98Q465.02000000000004 -1.92 462.74 -0.7999999999999999Q460.46000000000004 0.32 457.5 0.32Q454.5 0.32 452.22 -0.86Q449.94000000000005 -2.04 448.70000000000005 -4.16Q447.46000000000004 -6.28 447.46000000000004 -9.08ZM558.64 -24.0H545.0Q544.8 -24.0 544.8 -23.8V-16.32Q544.8 -16.12 545.0 -16.12H554.16Q554.36 -16.12 554.5 -15.98Q554.64 -15.84 554.64 -15.64V-12.6Q554.64 -12.4 554.5 -12.260000000000002Q554.36 -12.120000000000001 554.16 -12.120000000000001H545.0Q544.8 -12.120000000000001 544.8 -11.92V-4.2Q544.8 -4.0 545.0 -4.0H558.64Q558.84 -4.0 558.98 -3.8600000000000003Q559.12 -3.72 559.12 -3.52V-0.48Q559.12 -0.28 558.98 -0.14Q558.84 0.0 558.64 0.0H540.64Q540.44 0.0 540.3 -0.14Q540.16 -0.28 540.16 -0.48V-27.52Q540.16 -27.72 540.3 -27.86Q540.44 -28.0 540.64 -28.0H558.64Q558.84 -28.0 558.98 -27.86Q559.12 -27.72 559.12 -27.52V-24.48Q559.12 -24.28 558.98 -24.14Q558.84 -24.0 558.64 -24.0Z\" fill=\"#f26b1d\"/></svg>";
+const LOGO_MARK = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\" width=\"512\" height=\"512\"><title>Promech Service</title><polygon points=\"100.00,4.00 183.14,52.00 183.14,148.00 100.00,196.00 16.86,148.00 16.86,52.00\" fill=\"#1f2328\" stroke=\"#1f2328\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M64 42 H110 A37 37 0 0 1 110 116 H92 V142 L78 162 L64 142 Z M92 64 H110 A15 15 0 0 1 110 94 H92 Z\" fill=\"#f26b1d\" fill-rule=\"evenodd\"/><path d=\"M60 128 L96 116 L96 122 L60 134 Z M60 141 L96 129 L96 135 L60 147 Z\" fill=\"#1f2328\"/></svg>";
+
+/* ===== Constantes ===== */
+const LS_KEY = 'promech-app-v1';
+const COUNTRIES = {ZA:'Sudáfrica', ZM:'Zambia', CD:'RD Congo', OT:'Otro'};
+const CLIENT_STATUS = ['Prospecto','Contactado','Cotizado','Cliente activo','Perdido'];
+const QUOTE_STATUS = ['Borrador','Enviada','Aceptada','Rechazada'];
+const ORDER_STATUS = ['Recibida','En proceso','Control de calidad','Lista','Entregada'];
+const PRIORITIES = ['Baja','Normal','Alta','Urgente'];
+const CURRENCIES = {ZAR:{sym:'R',name:'Rand sudafricano'}, USD:{sym:'US$',name:'Dólar estadounidense'}, ZMW:{sym:'K',name:'Kwacha zambiano'}, CDF:{sym:'FC',name:'Franco congoleño'}};
+const UNITS = ['ud','pza','juego','h','día','kg','m','m²','lote','servicio','viaje'];
+
+/* ===== Utilidades ===== */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+const slug = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function fmtNum(n, dec=2){ n = Number(n)||0; const neg = n < 0; let [i,d] = Math.abs(n).toFixed(dec).split('.'); i = i.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return (neg?'-':'') + i + (dec ? ','+d : ''); }
+function fmtQty(n){ n = Number(n)||0; return Number.isInteger(n) ? fmtNum(n,0) : String(round2(n)).replace('.',','); }
+function fmtMoney(n, cur){ return (CURRENCIES[cur]?.sym || cur || '') + '\u00a0' + fmtNum(n); }
+function localISO(d){ const x = new Date(d.getTime() - d.getTimezoneOffset()*60000); return x.toISOString().slice(0,10); }
+const todayISO = () => localISO(new Date());
+function addDays(iso, n){ if(!iso) return ''; const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + Math.round(num(n))); return localISO(d); }
+function fmtDate(iso){ if(!iso) return '—'; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
+function daysBetween(a, b){ return Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000); }
+const badge = txt => `<span class="badge b-${slug(txt)}">${esc(txt)}</span>`;
+const exampleTag = o => o && o.example ? ' <span class="badge b-ejemplo" title="Dato de ejemplo">Ejemplo</span>' : '';
+function countryName(c){ return c ? (c.country === 'OT' ? (c.countryOther || 'Otro') : (COUNTRIES[c.country] || '')) : ''; }
+function opts(list, sel, labels){ return list.map(v => `<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(labels ? labels[v] : v)}</option>`).join(''); }
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2800); }
+function svgSized(svg){ return svg.replace(/(<svg[^>]*?)\swidth="[^"]*"\s+height="[^"]*"/, '$1').replace('<svg', '<svg aria-hidden="true" focusable="false"'); }
+function field(label, html, cls=''){ return `<label class="f ${cls}">${label}${html}</label>`; }
+
+/* ===== Estado y almacenamiento (localStorage) ===== */
+function defaultState(){
+  return {
+    version: 1,
+    settings: { companyName:'Promech Service', secondaryName:'', address:'', phone:'', email:'', website:'', vatReg:'', bank:'',
+      vatDefault:15, currencyDefault:'ZAR', validityDefault:30, quotePrefix:'PS', orderPrefix:'OT', termsDefault:'', logo:'', lastBackup:'', settingsVersion:2 },
+    clients: [], quotes: [], orders: [], counters: {}
+  };
+}
+function normalize(s){
+  const d = defaultState(); s = (s && typeof s === 'object') ? s : {};
+  const settings = {...d.settings, ...(s.settings || {})};
+  /* Migración: datos guardados antes del cambio de marca usaban el prefijo por defecto 'RM'.
+     Si nunca se personalizó (sin settingsVersion y valor 'RM'), pasa a 'PS'. Los números existentes no cambian. */
+  if (!(s.settings && s.settings.settingsVersion >= 2)) {
+    if (!s.settings || !s.settings.quotePrefix || String(s.settings.quotePrefix).trim().toUpperCase() === 'RM') settings.quotePrefix = 'PS';
+    settings.settingsVersion = 2;
+  }
+  return {
+    version: 1,
+    settings,
+    clients: Array.isArray(s.clients) ? s.clients.filter(x => x && x.id) : [],
+    quotes: Array.isArray(s.quotes) ? s.quotes.filter(x => x && x.id).map(q => ({...q, items: Array.isArray(q.items) ? q.items : []})) : [],
+    orders: Array.isArray(s.orders) ? s.orders.filter(x => x && x.id) : [],
+    counters: (s.counters && typeof s.counters === 'object') ? s.counters : {}
+  };
+}
+function load(){
+  try { const raw = localStorage.getItem(LS_KEY); if (raw) return normalize(JSON.parse(raw)); }
+  catch(e){ console.warn('No se pudieron leer los datos guardados', e); }
+  return defaultState();
+}
+function save(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); return true; }
+  catch(e){ alert('No se pudo guardar en el navegador (¿almacenamiento lleno o bloqueado?). Exporte un respaldo y reduzca el tamaño del logotipo.'); return false; }
+}
+let state = load();
+const ui = { clientQ:'', clientCountry:'', clientStatus:'', quoteQ:'', quoteStatus:'', orderQ:'', orderStatus:'', orderOnlyOverdue:false };
+
+const getClient = id => state.clients.find(c => c.id === id);
+const getQuote = id => id ? state.quotes.find(q => q.id === id) : undefined;
+const getOrder = id => state.orders.find(o => o.id === id);
+function clientLabel(id, snap){ const c = getClient(id); return c ? c.company : (snap?.company ? snap.company + ' (eliminado)' : '(cliente eliminado)'); }
+function snapshot(c){ return c ? {company:c.company, site:c.site, country:c.country, countryOther:c.countryOther, contact:c.contact, email:c.email, phone:c.phone} : null; }
+function sortedClientOptions(sel){ return state.clients.slice().sort((a,b) => (a.company||'').localeCompare(b.company||'','es')).map(c => `<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.company)}${c.site?' – '+esc(c.site):''}</option>`).join(''); }
+
+/* Numeración automática: PREFIJO-AAAA-0001 */
+function nextNumber(kind){
+  const pre = (kind === 'quote' ? (state.settings.quotePrefix || 'PS') : (state.settings.orderPrefix || 'OT')).trim();
+  const prefix = `${pre}-${new Date().getFullYear()}-`;
+  const list = kind === 'quote' ? state.quotes : state.orders;
+  let max = state.counters[prefix] || 0;
+  list.forEach(x => { if (x.number && x.number.startsWith(prefix)) { const n = parseInt(x.number.slice(prefix.length), 10); if (n > max) max = n; } });
+  return { number: prefix + String(max + 1).padStart(4, '0'), prefix, n: max + 1 };
+}
+function commitNumber(kind){ const r = nextNumber(kind); state.counters[r.prefix] = r.n; return r.number; }
+
+function quoteTotals(q){
+  /* cálculo en centavos enteros para evitar errores de redondeo */
+  const cents = (q.items || []).map(i => Math.round(round2(num(i.qty) * num(i.price) * 100) ));
+  const subC = cents.reduce((a,b) => a + b, 0);
+  const vatC = q.vatEnabled ? Math.round(subC * num(q.vatPct) / 100) : 0;
+  return { lines: cents.map(c => c / 100), sub: subC / 100, vat: vatC / 100, total: (subC + vatC) / 100 };
+}
+const quoteValidUntil = q => addDays(q.date, q.validityDays);
+const quoteExpired = q => q.status === 'Enviada' && q.date && quoteValidUntil(q) < todayISO();
+const isOpenQuote = q => q.status === 'Borrador' || q.status === 'Enviada';
+const isOpenOrder = o => o.status !== 'Entregada';
+const isOverdue = o => !!o.dueDate && o.status !== 'Entregada' && o.dueDate < todayISO();
+
+/* ===== Navegación ===== */
+const VIEWS = ['inicio','clientes','cotizaciones','ordenes','ajustes'];
+const currentView = () => { const h = location.hash.replace('#',''); return VIEWS.includes(h) ? h : 'inicio'; };
+function renderBrand(){
+  const s = state.settings;
+  $('#brand').innerHTML = s.logo ? `<span class="custom-logo"><img src="${esc(s.logo)}" alt="${esc(s.companyName)}"></span>` : svgSized(LOGO_REV);
+  document.title = (s.companyName || 'Promech Service') + ' · Gestión';
+}
+function render(){
+  const v = currentView();
+  $$('#nav a').forEach(a => a.classList.toggle('active', a.dataset.view === v));
+  renderBrand();
+  const fn = {inicio:viewInicio, clientes:viewClientes, cotizaciones:viewCotizaciones, ordenes:viewOrdenes, ajustes:viewAjustes}[v];
+  $('#main').innerHTML = fn();
+  refreshList();
+}
+function refreshList(){
+  const v = currentView(), el = $('#list'); if (!el) return;
+  if (v === 'clientes') el.innerHTML = clientListHTML();
+  if (v === 'cotizaciones') el.innerHTML = quoteListHTML();
+  if (v === 'ordenes') el.innerHTML = orderListHTML();
+}
+/* ===== INICIO ===== */
+function viewInicio(){
+  const C = state.clients, Q = state.quotes, O = state.orders, today = todayISO();
+  const active = C.filter(c => c.status === 'Cliente activo').length;
+  const prospects = C.filter(c => ['Prospecto','Contactado','Cotizado'].includes(c.status)).length;
+  const openQ = Q.filter(isOpenQuote);
+  const byCur = {}; openQ.forEach(q => { const k = q.currency || 'ZAR'; byCur[k] = (byCur[k] || 0) + quoteTotals(q).total; });
+  const curLines = Object.keys(byCur).length ? Object.entries(byCur).map(([c,v]) => fmtMoney(v,c)).join(' · ') : 'Sin valor pendiente';
+  const openO = O.filter(isOpenOrder), overdue = O.filter(isOverdue);
+  const empty = !C.length && !Q.length && !O.length;
+
+  const steps = C.filter(c => c.status !== 'Perdido' && (c.nextStep || c.nextDate))
+    .sort((a,b) => (a.nextDate||'9999').localeCompare(b.nextDate||'9999')).slice(0, 8);
+  const stepsHTML = steps.length ? `<ul class="mini-list">${steps.map(c => {
+      const late = c.nextDate && c.nextDate < today, isToday = c.nextDate === today;
+      return `<li><div class="date ${late?'tag-red':''}">${c.nextDate ? fmtDate(c.nextDate) : 'Sin fecha'}${late?'<div class="small">Vencido</div>':isToday?'<div class="small" style="color:var(--or2)">Hoy</div>':''}</div>
+        <div class="grow"><div class="strong">${esc(c.company)}${exampleTag(c)}</div><div class="small muted">${esc(c.nextStep || '—')}${c.contact?' · '+esc(c.contact):''}</div></div>
+        <button class="btn xs ghost" data-act="editClient" data-id="${c.id}">Abrir</button></li>`; }).join('')}</ul>`
+    : `<div class="empty">No hay próximos pasos programados.</div>`;
+
+  const upcoming = openO.slice().sort((a,b) => (a.dueDate||'9999').localeCompare(b.dueDate||'9999')).slice(0, 7);
+  const ordersHTML = upcoming.length ? `<ul class="mini-list">${upcoming.map(o => {
+      const late = isOverdue(o);
+      return `<li><div class="date ${late?'tag-red':''}">${fmtDate(o.dueDate)}${late?`<div class="small">${daysBetween(o.dueDate,today)} día(s) tarde</div>`:''}</div>
+        <div class="grow"><div class="strong"><span class="doc-no">${esc(o.number)}</span> · ${esc(clientLabel(o.clientId, o.clientSnapshot))}${exampleTag(o)}</div><div class="small muted">${esc((o.description||'').split('\n')[0])}</div></div>
+        ${badge(o.status)}</li>`; }).join('')}</ul>`
+    : `<div class="empty">No hay órdenes abiertas.</div>`;
+
+  const lb = state.settings.lastBackup;
+  const backupDays = lb ? daysBetween(lb.slice(0,10), today) : null;
+  const backupNote = empty ? '' : `<div class="backup-note ${(!lb || backupDays > 14) ? 'warn' : ''}">${lb ? `Último respaldo: ${fmtDate(lb.slice(0,10))} (hace ${backupDays} día(s)).` : 'Aún no ha exportado ningún respaldo de sus datos.'} <button class="btn xs ghost" data-act="exportData">Exportar respaldo ahora</button></div>`;
+
+  return `
+  ${empty ? `<div class="card welcome">${svgSized(LOGO_MARK)}<div><h1>Bienvenido a Promech Service</h1>
+    <div class="muted">Gestione clientes, cotizaciones y órdenes de trabajo para sus clientes mineros en Sudáfrica, Zambia y RD Congo. La aplicación empieza vacía y todos los datos quedan guardados en este navegador.</div>
+    <div class="btns"><button class="btn primary" data-act="newClient">+ Agregar primer cliente</button><button class="btn ghost" data-act="loadExample">Cargar datos de ejemplo</button><button class="btn ghost" data-act="importData">Importar respaldo (.json)</button></div></div></div>` : ''}
+  <div class="page-head"><div><h1>Inicio</h1><div class="sub">Resumen al ${fmtDate(today)}</div></div>
+    <div class="actions"><button class="btn ghost" data-act="newClient">+ Cliente</button><button class="btn ghost" data-act="newQuote">+ Cotización</button><button class="btn primary" data-act="newOrder">+ Orden de trabajo</button></div></div>
+  <div class="stats">
+    <a class="card stat green" href="#clientes" data-act="filterClients" data-id="Cliente activo"><div class="k">Clientes activos</div><div class="v" id="st-active">${active}</div><div class="d">de ${C.length} registrados</div></a>
+    <a class="card stat" href="#clientes" data-act="filterClients" data-id=""><div class="k">Prospectos</div><div class="v" id="st-prospects">${prospects}</div><div class="d">Prospecto · Contactado · Cotizado</div></a>
+    <a class="card stat or" href="#cotizaciones" data-act="filterOpenQuotes"><div class="k">Cotizaciones abiertas</div><div class="v" id="st-openq">${openQ.length}</div><div class="d" id="st-openq-value">${esc(curLines)}</div></a>
+    <a class="card stat" href="#ordenes" data-act="filterOpenOrders"><div class="k">Órdenes abiertas</div><div class="v" id="st-openo">${openO.length}</div><div class="d">Pendientes de entrega</div></a>
+    <a class="card stat red" href="#ordenes" data-act="filterOverdue"><div class="k">Órdenes atrasadas</div><div class="v" id="st-overdue">${overdue.length}</div><div class="d">Fecha de entrega vencida</div></a>
+  </div>
+  <div class="dash-grid">
+    <div class="card card-pad"><h2>Próximos pasos con clientes</h2>${stepsHTML}</div>
+    <div class="card card-pad"><h2>Entregas de órdenes de trabajo</h2>${ordersHTML}</div>
+  </div>
+  ${backupNote}`;
+}
+
+/* ===== CLIENTES ===== */
+function viewClientes(){
+  return `<div class="page-head"><div><h1>Clientes</h1><div class="sub">Empresas mineras, prospectos y contactos</div></div><button class="btn primary" data-act="newClient">+ Nuevo cliente</button></div>
+  <div class="card toolbar">
+    <input type="search" placeholder="Buscar empresa, mina, contacto, correo…" data-filter="clientQ" value="${esc(ui.clientQ)}" aria-label="Buscar clientes">
+    <select data-filter="clientCountry" aria-label="Filtrar por país"><option value="">Todos los países</option>${opts(Object.keys(COUNTRIES), ui.clientCountry, COUNTRIES)}</select>
+    <select data-filter="clientStatus" aria-label="Filtrar por estado"><option value="">Todos los estados</option>${opts(CLIENT_STATUS, ui.clientStatus)}</select>
+  </div>
+  <div id="list"></div>`;
+}
+function clientListHTML(){
+  const q = ui.clientQ.trim().toLowerCase(), today = todayISO();
+  const rows = state.clients.filter(c => (!ui.clientCountry || c.country === ui.clientCountry) && (!ui.clientStatus || c.status === ui.clientStatus) &&
+      (!q || [c.company,c.site,c.contact,c.email,c.phone,c.notes,c.nextStep,countryName(c)].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => (a.company||'').localeCompare(b.company||'', 'es'));
+  if (!state.clients.length) return `<div class="card empty">Aún no hay clientes.<br><br><button class="btn primary" data-act="newClient">+ Agregar cliente</button> <button class="btn ghost" data-act="loadExample">Cargar datos de ejemplo</button></div>`;
+  if (!rows.length) return `<div class="card empty">Ningún cliente coincide con los filtros.</div>`;
+  return `<div class="card table-wrap"><table class="list"><thead><tr><th>Empresa / Mina</th><th>País</th><th>Contacto</th><th>Estado</th><th>Próximo paso</th><th></th></tr></thead><tbody>
+  ${rows.map(c => { const late = c.nextDate && c.nextDate < today && c.status !== 'Perdido';
+    return `<tr data-row="${c.id}">
+      <td data-label="Empresa"><div><div class="strong">${esc(c.company)}${exampleTag(c)}</div><div class="small muted">${esc(c.site||'')}</div></div></td>
+      <td data-label="País">${esc(countryName(c))}</td>
+      <td data-label="Contacto"><div><div>${esc(c.contact||'—')}</div><div class="small">${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:''}${c.email&&c.phone?' · ':''}${c.phone?`<a href="tel:${esc(String(c.phone).replace(/\s/g,''))}">${esc(c.phone)}</a>`:''}</div></div></td>
+      <td data-label="Estado">${badge(c.status||'Prospecto')}</td>
+      <td data-label="Próximo paso"><div><div>${esc(c.nextStep||'—')}</div>${c.nextDate?`<div class="small ${late?'tag-red':'muted'}">${fmtDate(c.nextDate)}${late?' · vencido':''}</div>`:''}</div></td>
+      <td class="actions-cell"><div class="actions"><button class="btn xs ghost" data-act="editClient" data-id="${c.id}">Editar</button><button class="btn xs ghost" data-act="quoteForClient" data-id="${c.id}">Cotizar</button><button class="btn xs danger" data-act="delClient" data-id="${c.id}">Eliminar</button></div></td>
+    </tr>`; }).join('')}
+  </tbody></table></div><div class="small muted" style="margin-top:8px">${rows.length} de ${state.clients.length} cliente(s)</div>`;
+}
+function openClientForm(id){
+  const c = id ? getClient(id) : {country:'ZA', status:'Prospecto'};
+  if (!c) return;
+  const body = `<div class="grid g2">
+    ${field('Empresa *', `<input name="company" required maxlength="160" value="${esc(c.company)}" placeholder="Nombre de la empresa">`)}
+    ${field('Mina / sitio', `<input name="site" maxlength="160" value="${esc(c.site)}" placeholder="Mina, planta o sitio">`)}
+    ${field('País', `<select name="country">${opts(Object.keys(COUNTRIES), c.country, COUNTRIES)}</select>`)}
+    ${field('Otro país (si aplica)', `<input name="countryOther" maxlength="80" value="${esc(c.countryOther)}" placeholder="p. ej. Namibia">`)}
+    ${field('Persona de contacto', `<input name="contact" maxlength="120" value="${esc(c.contact)}">`)}
+    ${field('Estado', `<select name="status">${opts(CLIENT_STATUS, c.status)}</select>`)}
+    ${field('Correo electrónico', `<input name="email" type="email" maxlength="160" value="${esc(c.email)}">`)}
+    ${field('Teléfono', `<input name="phone" type="tel" maxlength="60" value="${esc(c.phone)}">`)}
+    ${field('Próximo paso', `<input name="nextStep" maxlength="200" value="${esc(c.nextStep)}" placeholder="p. ej. Llamar para seguimiento">`)}
+    ${field('Fecha del próximo paso', `<input name="nextDate" type="date" value="${esc(c.nextDate)}">`)}
+    ${field('Notas', `<textarea name="notes" rows="4">${esc(c.notes)}</textarea>`, 'spanall')}
+  </div>`;
+  openModal(id ? 'Editar cliente' : 'Nuevo cliente', body, { onSave: f => {
+    const d = Object.fromEntries(new FormData(f));
+    if (!d.company.trim()) { alert('Indique el nombre de la empresa.'); return false; }
+    const rec = {...d, company:d.company.trim(), updatedAt:new Date().toISOString()};
+    if (id) Object.assign(c, rec); else state.clients.push({...rec, id:uid(), createdAt:new Date().toISOString()});
+    save(); render(); toast(id ? 'Cliente actualizado' : 'Cliente agregado');
+  }});
+}
+function deleteClient(id){
+  const c = getClient(id); if (!c) return;
+  const nq = state.quotes.filter(q => q.clientId === id).length, no = state.orders.filter(o => o.clientId === id).length;
+  const extra = (nq || no) ? `\n\nTiene ${nq} cotización(es) y ${no} orden(es) vinculadas; se conservarán con los datos guardados del cliente.` : '';
+  if (!confirm(`¿Eliminar el cliente "${c.company}"?${extra}`)) return;
+  state.quotes.forEach(q => { if (q.clientId === id) q.clientSnapshot = snapshot(c); });
+  state.orders.forEach(o => { if (o.clientId === id) o.clientSnapshot = snapshot(c); });
+  state.clients = state.clients.filter(x => x.id !== id);
+  save(); render(); toast('Cliente eliminado');
+}
+/* ===== COTIZACIONES ===== */
+function viewCotizaciones(){
+  return `<div class="page-head"><div><h1>Cotizaciones</h1><div class="sub">Presupuestos de mecanizado, ingeniería y servicio</div></div><button class="btn primary" data-act="newQuote">+ Nueva cotización</button></div>
+  <div class="card toolbar">
+    <input type="search" placeholder="Buscar número, cliente, descripción…" data-filter="quoteQ" value="${esc(ui.quoteQ)}" aria-label="Buscar cotizaciones">
+    <select data-filter="quoteStatus" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option value="__open" ${ui.quoteStatus==='__open'?'selected':''}>Abiertas (Borrador + Enviada)</option>${opts(QUOTE_STATUS, ui.quoteStatus)}</select>
+  </div>
+  <div id="list"></div>`;
+}
+function quoteListHTML(){
+  const q = ui.quoteQ.trim().toLowerCase();
+  const rows = state.quotes.filter(x => (!ui.quoteStatus || (ui.quoteStatus === '__open' ? isOpenQuote(x) : x.status === ui.quoteStatus)) &&
+      (!q || [x.number, clientLabel(x.clientId, x.clientSnapshot), x.terms, ...(x.items||[]).map(i => i.desc)].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => (b.number||'').localeCompare(a.number||''));
+  if (!state.quotes.length) return `<div class="card empty">Aún no hay cotizaciones.<br><br><button class="btn primary" data-act="newQuote">+ Nueva cotización</button></div>`;
+  if (!rows.length) return `<div class="card empty">Ninguna cotización coincide con los filtros.</div>`;
+  return `<div class="card table-wrap"><table class="list"><thead><tr><th>Número</th><th>Cliente</th><th>Fecha</th><th>Válida hasta</th><th class="r">Total</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${rows.map(x => { const t = quoteTotals(x), ords = state.orders.filter(o => o.quoteId === x.id);
+    return `<tr data-row="${x.id}">
+      <td data-label="Número"><div><span class="doc-no">${esc(x.number)}</span>${exampleTag(x)}</div></td>
+      <td data-label="Cliente"><div><div class="strong">${esc(clientLabel(x.clientId, x.clientSnapshot))}</div><div class="small muted">${(x.items||[]).length} partida(s)</div></div></td>
+      <td data-label="Fecha" class="nowrap">${fmtDate(x.date)}</td>
+      <td data-label="Válida hasta" class="nowrap">${fmtDate(quoteValidUntil(x))}${quoteExpired(x)?' <span class="small tag-red">vencida</span>':''}</td>
+      <td data-label="Total" class="r nowrap strong">${fmtMoney(t.total, x.currency)}</td>
+      <td data-label="Estado"><select class="inline-status b-${slug(x.status)}" data-change="quoteStatus" data-id="${x.id}" aria-label="Estado">${opts(QUOTE_STATUS, x.status)}</select></td>
+      <td class="actions-cell"><div class="actions">
+        ${x.status==='Aceptada' ? `<button class="btn xs primary" data-act="quoteToOrder" data-id="${x.id}">Crear orden de trabajo</button>` : ''}
+        ${ords.length ? `<span class="small muted" style="align-self:center">OT: ${ords.map(o => esc(o.number)).join(', ')}</span>` : ''}
+        <button class="btn xs dark" data-act="pdfQuote" data-id="${x.id}">Generar PDF</button>
+        <button class="btn xs ghost" data-act="editQuote" data-id="${x.id}">Editar</button>
+        <button class="btn xs ghost" data-act="dupQuote" data-id="${x.id}">Duplicar</button>
+        <button class="btn xs danger" data-act="delQuote" data-id="${x.id}">Eliminar</button></div></td>
+    </tr>`; }).join('')}
+  </tbody></table></div><div class="small muted" style="margin-top:8px">${rows.length} de ${state.quotes.length} cotización(es)</div>`;
+}
+function itemRow(it={}){
+  return `<div class="item-row">
+    <input class="i-desc" placeholder="Descripción del trabajo / pieza" value="${esc(it.desc)}" aria-label="Descripción">
+    <input class="i-qty" type="number" step="any" min="0" inputmode="decimal" value="${esc(it.qty ?? 1)}" aria-label="Cantidad">
+    <input class="i-unit" list="units-list" value="${esc(it.unit ?? 'ud')}" aria-label="Unidad">
+    <input class="i-price" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(it.price ?? '')}" placeholder="0,00" aria-label="Precio unitario">
+    <div class="i-amount">0,00</div>
+    <button type="button" class="icon-btn del" data-act="delItem" title="Quitar partida" aria-label="Quitar partida">×</button>
+  </div>`;
+}
+function readItems(){ return $$('#items .item-row').map(r => ({ desc:$('.i-desc',r).value.trim(), qty:num($('.i-qty',r).value), unit:$('.i-unit',r).value.trim(), price:num($('.i-price',r).value) })); }
+function updateQuoteTotals(){
+  const f = $('#modal-form'); if (!f || !$('#items')) return;
+  const cur = f.currency.value;
+  const q = { items: readItems(), vatEnabled: f.vatEnabled.checked, vatPct: f.vatPct.value };
+  const t = quoteTotals(q);
+  $$('#items .item-row').forEach((r,i) => { $('.i-amount', r).textContent = fmtNum(t.lines[i]); });
+  f.vatPct.disabled = !f.vatEnabled.checked;
+  $('#q-totals').innerHTML = `<div><span>Subtotal</span><span id="t-sub">${fmtMoney(t.sub,cur)}</span></div>
+    <div><span>IVA ${q.vatEnabled ? '('+fmtQty(num(q.vatPct))+' %)' : '(no aplica)'}</span><span id="t-vat">${fmtMoney(t.vat,cur)}</span></div>
+    <div class="grand"><span>Total ${esc(cur)}</span><span id="t-total">${fmtMoney(t.total,cur)}</span></div>`;
+}
+function openQuoteForm(id, preset){
+  const s = state.settings;
+  const q = id ? getQuote(id) : { date:todayISO(), validityDays:s.validityDefault, currency:s.currencyDefault||'ZAR', vatEnabled:true, vatPct:s.vatDefault, status:'Borrador', terms:s.termsDefault, items:[{qty:1,unit:'ud'}], ...(preset||{}) };
+  if (!q) return;
+  if (!state.clients.length) { if (confirm('Primero necesita al menos un cliente. ¿Desea agregar uno ahora?')) openClientForm(); return; }
+  const body = `<div class="grid g4">
+    ${field('Cliente *', `<select name="clientId" required><option value="">— Seleccione un cliente —</option>${sortedClientOptions(q.clientId)}</select>`, 'span2')}
+    ${field('N.º de cotización', `<input value="${esc(q.number || nextNumber('quote').number + ' (al guardar)')}" disabled>`)}
+    ${field('Estado', `<select name="status">${opts(QUOTE_STATUS, q.status)}</select>`)}
+    ${field('Fecha *', `<input type="date" name="date" required value="${esc(q.date)}">`)}
+    ${field('Validez (días)', `<input type="number" name="validityDays" min="0" step="1" value="${esc(q.validityDays)}">`)}
+    ${field('Moneda', `<select name="currency">${Object.keys(CURRENCIES).map(k => `<option value="${k}" ${k===q.currency?'selected':''}>${k} – ${CURRENCIES[k].name}</option>`).join('')}</select>`)}
+    ${field('IVA', `<div class="vat-row"><label class="chk"><input type="checkbox" name="vatEnabled" ${q.vatEnabled?'checked':''}> Aplicar</label><input type="number" name="vatPct" min="0" max="100" step="0.01" value="${esc(q.vatPct)}" aria-label="IVA %"><span>%</span></div>`)}
+  </div>
+  <div class="section-title">Partidas</div>
+  <div class="items" id="items"><div class="item-head"><div>Descripción</div><div>Cantidad</div><div>Unidad</div><div class="r">Precio unit.</div><div class="r">Importe</div><div></div></div>
+    ${(q.items.length ? q.items : [{}]).map(itemRow).join('')}</div>
+  <datalist id="units-list">${UNITS.map(u => `<option value="${u}">`).join('')}</datalist>
+  <button type="button" class="btn sm ghost" data-act="addItem">+ Agregar partida</button>
+  <div class="totals" id="q-totals"></div>
+  ${field('Términos y notas', `<textarea name="terms" rows="4" placeholder="Plazo de entrega, condiciones de pago, garantía, exclusiones…">${esc(q.terms)}</textarea>`)}`;
+  openModal(id ? `Editar cotización ${q.number}` : 'Nueva cotización', body, { wide:true, onSave: f => {
+    const d = Object.fromEntries(new FormData(f));
+    const items = readItems().filter(i => i.desc || i.price);
+    if (!d.clientId) { alert('Seleccione un cliente.'); return false; }
+    if (!items.length || items.some(i => !i.desc)) { alert('Agregue al menos una partida; cada partida necesita una descripción.'); return false; }
+    const prevStatus = id ? q.status : null;
+    const rec = { clientId:d.clientId, date:d.date, validityDays:Math.max(0, Math.round(num(d.validityDays))), currency:d.currency, vatEnabled:f.vatEnabled.checked,
+      vatPct: f.vatEnabled.checked ? num(d.vatPct) : num(q.vatPct ?? s.vatDefault), status:d.status, terms:d.terms, items, clientSnapshot:snapshot(getClient(d.clientId)), updatedAt:new Date().toISOString() };
+    let saved;
+    if (id) { Object.assign(q, rec); saved = q; }
+    else { saved = {...rec, id:uid(), number:commitNumber('quote'), createdAt:new Date().toISOString()}; state.quotes.push(saved); }
+    const note = syncClientFromQuote(saved, prevStatus);
+    save(); render(); toast((id ? 'Cotización actualizada' : `Cotización ${saved.number} creada`) + (note ? ' · ' + note : ''));
+  }});
+  const f = $('#modal-form');
+  f.addEventListener('input', updateQuoteTotals); f.addEventListener('change', updateQuoteTotals);
+  updateQuoteTotals();
+}
+/* Al enviar/aceptar una cotización se actualiza el estado del cliente */
+function syncClientFromQuote(q, prev){
+  if (q.status === prev) return '';
+  const c = getClient(q.clientId); if (!c) return '';
+  if (q.status === 'Aceptada' && c.status !== 'Cliente activo') { c.status = 'Cliente activo'; return `${c.company} pasa a «Cliente activo»`; }
+  if (q.status === 'Enviada' && ['Prospecto','Contactado'].includes(c.status)) { c.status = 'Cotizado'; return `${c.company} pasa a «Cotizado»`; }
+  return '';
+}
+function setQuoteStatus(id, status){
+  const q = getQuote(id); if (!q) return;
+  const prev = q.status; q.status = status; q.updatedAt = new Date().toISOString();
+  const note = syncClientFromQuote(q, prev);
+  save(); refreshList(); toast(`${q.number}: ${status}` + (note ? ' · ' + note : ''));
+}
+function duplicateQuote(id){
+  const q = getQuote(id); if (!q) return;
+  const copy = JSON.parse(JSON.stringify(q));
+  Object.assign(copy, { id:uid(), number:commitNumber('quote'), date:todayISO(), status:'Borrador', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+  delete copy.example;
+  state.quotes.push(copy); save(); render(); toast(`Copia creada: ${copy.number}`);
+}
+function deleteQuote(id){
+  const q = getQuote(id); if (!q) return;
+  if (!confirm(`¿Eliminar la cotización ${q.number}?`)) return;
+  state.quotes = state.quotes.filter(x => x.id !== id);
+  state.orders.forEach(o => { if (o.quoteId === id) { o.quoteNumber = q.number; o.quoteId = ''; } });
+  save(); render(); toast('Cotización eliminada');
+}
+function quoteToOrder(id){
+  const q = getQuote(id); if (!q) return;
+  if (q.status !== 'Aceptada') { alert('Solo se pueden convertir cotizaciones aceptadas.'); return; }
+  const existing = state.orders.filter(o => o.quoteId === id);
+  if (existing.length && !confirm(`Ya existe ${existing.map(o => o.number).join(', ')} para esta cotización. ¿Crear otra orden de trabajo?`)) return;
+  const multi = (q.items||[]).length > 1;
+  openOrderForm(null, { clientId:q.clientId, quoteId:q.id,
+    description:(q.items||[]).map(i => i.desc + (multi ? ` (${fmtQty(i.qty)} ${i.unit||''})`.replace(' )',')') : '')).filter(Boolean).join('\n'),
+    quantity: multi ? 1 : (q.items[0]?.qty || 1) }, true);
+}
+
+/* ===== Vista imprimible de la cotización (Generar PDF) ===== */
+function quotePrintHTML(q){
+  const s = state.settings, c = getClient(q.clientId) || q.clientSnapshot || {}, t = quoteTotals(q), cur = q.currency || 'ZAR';
+  const contactLine = [s.phone && 'Tel.: ' + s.phone, s.email, s.website].filter(Boolean).map(esc).join('<br>');
+  return `<div class="print-toolbar no-print">
+      <button class="btn primary" data-act="printNow">Imprimir / Guardar PDF</button>
+      <button class="btn ghost" data-act="closePrint">← Volver</button>
+      <span class="hint">En el diálogo de impresión elija «Guardar como PDF» como destino.</span>
+    </div>
+    <div class="sheet" id="quote-sheet">
+      <div class="doc-head">
+        <div class="doc-logo">${s.logo ? `<img src="${esc(s.logo)}" alt="${esc(s.companyName)}">` : svgSized(LOGO_FULL)}</div>
+        <div class="doc-company"><strong>${esc(s.companyName || 'Promech Service')}</strong>
+          ${s.secondaryName ? `<div>${esc(s.secondaryName)}</div>` : ''}
+          ${s.address ? `<div class="pre">${esc(s.address)}</div>` : ''}
+          ${contactLine ? `<div>${contactLine}</div>` : ''}
+          ${s.vatReg ? `<div>${esc(s.vatReg)}</div>` : ''}</div>
+      </div>
+      <div class="doc-titlebar">
+        <h1>COTIZACIÓN${q.status === 'Borrador' ? '<span class="draft">BORRADOR</span>' : ''}</h1>
+        <table class="meta">
+          <tr><td>N.º</td><td>${esc(q.number)}</td></tr>
+          <tr><td>Fecha</td><td>${fmtDate(q.date)}</td></tr>
+          <tr><td>Válida hasta</td><td>${fmtDate(quoteValidUntil(q))} (${num(q.validityDays)} días)</td></tr>
+          <tr><td>Moneda</td><td>${esc(cur)} – ${esc(CURRENCIES[cur]?.name || '')}</td></tr>
+        </table>
+      </div>
+      <div class="doc-client"><div class="label">Cliente</div>
+        <strong>${esc(c.company || '')}</strong>
+        <div>${[c.site, countryName(c)].filter(Boolean).map(esc).join(' · ')}</div>
+        ${c.contact ? `<div>Atención: ${esc(c.contact)}</div>` : ''}
+        <div>${[c.email, c.phone].filter(Boolean).map(esc).join(' · ')}</div>
+      </div>
+      <table class="doc-items"><thead><tr><th style="width:28px">#</th><th>Descripción</th><th class="r">Cant.</th><th>Unidad</th><th class="r">Precio unit.</th><th class="r">Importe</th></tr></thead>
+        <tbody>${(q.items||[]).map((i,ix) => `<tr><td>${ix+1}</td><td class="pre">${esc(i.desc)}</td><td class="r">${fmtQty(i.qty)}</td><td>${esc(i.unit)}</td><td class="r">${fmtMoney(i.price,cur)}</td><td class="r">${fmtMoney(t.lines[ix],cur)}</td></tr>`).join('')}</tbody></table>
+      <div class="doc-totals"><table>
+        <tr><td>Subtotal</td><td id="p-sub">${fmtMoney(t.sub,cur)}</td></tr>
+        ${q.vatEnabled ? `<tr><td>IVA (${fmtQty(num(q.vatPct))} %)</td><td id="p-vat">${fmtMoney(t.vat,cur)}</td></tr>` : `<tr><td>IVA</td><td id="p-vat">No aplica</td></tr>`}
+        <tr class="grand"><td>TOTAL ${esc(cur)}</td><td id="p-total">${fmtMoney(t.total,cur)}</td></tr>
+      </table></div>
+      ${q.terms ? `<div class="doc-block"><h3>Términos y condiciones</h3><div class="pre">${esc(q.terms)}</div></div>` : ''}
+      ${s.bank ? `<div class="doc-block"><h3>Datos bancarios</h3><div class="pre">${esc(s.bank)}</div></div>` : ''}
+      <div class="doc-sign"><div>Preparado por – ${esc(s.companyName || 'Promech Service')}</div><div>Aceptado por el cliente (nombre, firma y fecha)</div></div>
+      <div class="doc-foot">${[s.companyName, s.secondaryName, s.phone, s.email, s.vatReg].filter(Boolean).map(esc).join(' · ')}</div>
+    </div>`;
+}
+let titleBeforePrint = '';
+function openQuotePrint(id, auto=true){
+  const q = getQuote(id); if (!q) return;
+  closeModal();
+  $('#print-root').innerHTML = quotePrintHTML(q);
+  document.body.classList.add('print-mode'); window.scrollTo(0,0);
+  titleBeforePrint = document.title;
+  document.title = `${q.number} ${clientLabel(q.clientId, q.clientSnapshot)}`.replace(/[\\/:*?"<>|]/g,'');
+  if (auto) setTimeout(() => window.print(), 400);
+}
+function closePrint(){ document.body.classList.remove('print-mode'); $('#print-root').innerHTML = ''; if (titleBeforePrint) document.title = titleBeforePrint; }
+/* ===== ÓRDENES DE TRABAJO ===== */
+function viewOrdenes(){
+  return `<div class="page-head"><div><h1>Órdenes de trabajo</h1><div class="sub">Trabajos en taller y servicio en sitio</div></div><button class="btn primary" data-act="newOrder">+ Nueva orden</button></div>
+  <div class="card toolbar">
+    <input type="search" placeholder="Buscar número, cliente, pieza, técnico…" data-filter="orderQ" value="${esc(ui.orderQ)}" aria-label="Buscar órdenes">
+    <select data-filter="orderStatus" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option value="__open" ${ui.orderStatus==='__open'?'selected':''}>Abiertas (no entregadas)</option>${opts(ORDER_STATUS, ui.orderStatus)}</select>
+    <label class="chk"><input type="checkbox" data-filter="orderOnlyOverdue" ${ui.orderOnlyOverdue?'checked':''}> Solo atrasadas</label>
+  </div>
+  <div id="list"></div>`;
+}
+function orderListHTML(){
+  const q = ui.orderQ.trim().toLowerCase(), today = todayISO(), prio = {Urgente:0, Alta:1, Normal:2, Baja:3};
+  const rows = state.orders.filter(o => (!ui.orderStatus || (ui.orderStatus === '__open' ? isOpenOrder(o) : o.status === ui.orderStatus)) && (!ui.orderOnlyOverdue || isOverdue(o)) &&
+      (!q || [o.number, clientLabel(o.clientId, o.clientSnapshot), o.description, o.material, o.technician, getQuote(o.quoteId)?.number, o.notes].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => (a.status === 'Entregada') - (b.status === 'Entregada') || (a.dueDate||'9999').localeCompare(b.dueDate||'9999') || (prio[a.priority]??2) - (prio[b.priority]??2));
+  if (!state.orders.length) return `<div class="card empty">Aún no hay órdenes de trabajo.<br><br><button class="btn primary" data-act="newOrder">+ Nueva orden</button><div class="small" style="margin-top:10px">Consejo: desde una cotización aceptada use «Crear orden de trabajo».</div></div>`;
+  if (!rows.length) return `<div class="card empty">Ninguna orden coincide con los filtros.</div>`;
+  return `<div class="card table-wrap"><table class="list"><thead><tr><th>Número</th><th>Cliente</th><th>Trabajo / pieza</th><th>Técnico</th><th>Prioridad</th><th>Recibida</th><th>Entrega</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${rows.map(o => { const late = isOverdue(o), qq = getQuote(o.quoteId);
+    return `<tr data-row="${o.id}" class="${late?'overdue':''}">
+      <td data-label="Número"><div><span class="doc-no">${esc(o.number)}</span>${exampleTag(o)}${late?'<div><span class="badge b-atrasada">Atrasada</span></div>':''}</div></td>
+      <td data-label="Cliente"><div><div class="strong">${esc(clientLabel(o.clientId, o.clientSnapshot))}</div>${qq ? `<div class="small muted">Cot. ${esc(qq.number)}</div>` : o.quoteNumber ? `<div class="small muted">Cot. ${esc(o.quoteNumber)} (eliminada)</div>` : ''}</div></td>
+      <td data-label="Trabajo"><div><div class="pre">${esc(o.description||'—')}</div><div class="small muted">${[o.material && 'Material: ' + o.material, o.quantity && 'Cant.: ' + fmtQty(o.quantity)].filter(Boolean).map(esc).join(' · ')}</div></div></td>
+      <td data-label="Técnico">${esc(o.technician||'—')}</td>
+      <td data-label="Prioridad">${badge(o.priority||'Normal')}</td>
+      <td data-label="Recibida" class="nowrap">${fmtDate(o.receivedDate)}</td>
+      <td data-label="Entrega" class="nowrap ${late?'tag-red':''}"><div>${fmtDate(o.dueDate)}${late?`<div class="small">${daysBetween(o.dueDate,today)} día(s) tarde</div>`:''}</div></td>
+      <td data-label="Estado"><select class="inline-status b-${slug(o.status)}" data-change="orderStatus" data-id="${o.id}" aria-label="Estado">${opts(ORDER_STATUS, o.status)}</select></td>
+      <td class="actions-cell"><div class="actions"><button class="btn xs ghost" data-act="editOrder" data-id="${o.id}">Editar</button><button class="btn xs danger" data-act="delOrder" data-id="${o.id}">Eliminar</button></div></td>
+    </tr>`; }).join('')}
+  </tbody></table></div><div class="small muted" style="margin-top:8px">${rows.length} de ${state.orders.length} orden(es)</div>`;
+}
+function quoteOptionsFor(clientId, selected){
+  const list = state.quotes.filter(q => q.clientId === clientId && (q.status === 'Aceptada' || q.id === selected)).sort((a,b) => (b.number||'').localeCompare(a.number||''));
+  return `<option value="">— Sin cotización —</option>` + list.map(q => `<option value="${q.id}" ${q.id===selected?'selected':''}>${esc(q.number)} · ${fmtMoney(quoteTotals(q).total, q.currency)} (${esc(q.status)})</option>`).join('');
+}
+function openOrderForm(id, preset, goToOrders){
+  const o = id ? getOrder(id) : { priority:'Normal', status:'Recibida', receivedDate:todayISO(), dueDate:addDays(todayISO(), 14), quantity:1, ...(preset||{}) };
+  if (!o) return;
+  if (!state.clients.length) { if (confirm('Primero necesita al menos un cliente. ¿Desea agregar uno ahora?')) openClientForm(); return; }
+  const techs = [...new Set(state.orders.map(x => x.technician).filter(Boolean))];
+  const body = `<div class="grid g4">
+    ${field('Cliente *', `<select name="clientId" required><option value="">— Seleccione un cliente —</option>${sortedClientOptions(o.clientId)}</select>`, 'span2')}
+    ${field('Cotización aceptada (opcional)', `<select name="quoteId">${quoteOptionsFor(o.clientId, o.quoteId)}</select>`)}
+    ${field('N.º de orden', `<input value="${esc(o.number || nextNumber('order').number + ' (al guardar)')}" disabled>`)}
+    ${field('Descripción de la pieza / trabajo *', `<textarea name="description" rows="3" required placeholder="p. ej. Reconstrucción de eje, mecanizado de bujes…">${esc(o.description)}</textarea>`, 'spanall')}
+    ${field('Material', `<input name="material" maxlength="120" value="${esc(o.material)}" placeholder="p. ej. EN19, acero inoxidable 316">`, 'span2')}
+    ${field('Cantidad', `<input name="quantity" type="number" min="0" step="any" value="${esc(o.quantity)}">`)}
+    ${field('Técnico asignado', `<input name="technician" list="tech-list" maxlength="80" value="${esc(o.technician)}"><datalist id="tech-list">${techs.map(t => `<option value="${esc(t)}">`).join('')}</datalist>`)}
+    ${field('Prioridad', `<select name="priority">${opts(PRIORITIES, o.priority)}</select>`)}
+    ${field('Fecha de recepción', `<input name="receivedDate" type="date" value="${esc(o.receivedDate)}">`)}
+    ${field('Fecha de entrega', `<input name="dueDate" type="date" value="${esc(o.dueDate)}">`)}
+    ${field('Estado', `<select name="status">${opts(ORDER_STATUS, o.status)}</select>`)}
+    ${field('Notas internas', `<textarea name="notes" rows="2">${esc(o.notes)}</textarea>`, 'spanall')}
+  </div>`;
+  openModal(id ? `Editar orden ${o.number}` : 'Nueva orden de trabajo', body, { wide:true, onSave: f => {
+    const d = Object.fromEntries(new FormData(f));
+    if (!d.clientId || !d.description.trim()) { alert('Cliente y descripción son obligatorios.'); return false; }
+    const rec = {...d, quantity:num(d.quantity), clientSnapshot:snapshot(getClient(d.clientId)), updatedAt:new Date().toISOString()};
+    let saved;
+    if (id) { Object.assign(o, rec); saved = o; }
+    else { saved = {...rec, id:uid(), number:commitNumber('order'), createdAt:new Date().toISOString()}; state.orders.push(saved); }
+    save();
+    if (goToOrders && currentView() !== 'ordenes') { Object.assign(ui, {orderStatus:'', orderQ:'', orderOnlyOverdue:false}); location.hash = '#ordenes'; } else render();
+    toast(id ? 'Orden actualizada' : `Orden ${saved.number} creada`);
+  }});
+  const f = $('#modal-form');
+  f.clientId.addEventListener('change', () => { f.quoteId.innerHTML = quoteOptionsFor(f.clientId.value, ''); });
+}
+function setOrderStatus(id, status){ const o = getOrder(id); if (!o) return; o.status = status; o.updatedAt = new Date().toISOString(); save(); refreshList(); toast(`${o.number}: ${status}`); }
+function deleteOrder(id){ const o = getOrder(id); if (!o) return; if (!confirm(`¿Eliminar la orden ${o.number}?`)) return; state.orders = state.orders.filter(x => x.id !== id); save(); render(); toast('Orden eliminada'); }
+
+/* ===== AJUSTES ===== */
+function viewAjustes(){
+  const s = state.settings;
+  let used = 0; try { used = (localStorage.getItem(LS_KEY) || '').length; } catch(e){}
+  const nEx = [...state.clients, ...state.quotes, ...state.orders].filter(x => x.example).length;
+  return `<div class="page-head"><div><h1>Ajustes</h1><div class="sub">Datos de la empresa para las cotizaciones y valores por defecto</div></div></div>
+  <div class="settings-grid">
+    <form class="card card-pad" id="settings-form">
+      <h2>Datos de la empresa</h2>
+      <div class="grid g2">
+        ${field('Nombre de la empresa', `<input name="companyName" value="${esc(s.companyName)}" maxlength="120">`)}
+        ${field('Línea secundaria (opcional)', `<input name="secondaryName" value="${esc(s.secondaryName)}" maxlength="160" placeholder="p. ej. Rock Mech International">`)}
+        ${field('Dirección', `<textarea name="address" rows="3">${esc(s.address)}</textarea>`, 'spanall')}
+        ${field('Teléfono', `<input name="phone" value="${esc(s.phone)}" maxlength="60">`)}
+        ${field('Correo electrónico', `<input name="email" type="email" value="${esc(s.email)}" maxlength="120">`)}
+        ${field('Sitio web', `<input name="website" value="${esc(s.website)}" maxlength="120">`)}
+        ${field('N.º IVA / registro', `<input name="vatReg" value="${esc(s.vatReg)}" maxlength="120" placeholder="p. ej. N.º IVA … · Reg. …">`)}
+        ${field('Datos bancarios (se imprimen en la cotización)', `<textarea name="bank" rows="3">${esc(s.bank)}</textarea>`, 'spanall')}
+      </div>
+      <div class="section-title">Valores por defecto</div>
+      <div class="grid g4">
+        ${field('IVA por defecto (%)', `<input name="vatDefault" type="number" min="0" max="100" step="0.01" value="${esc(s.vatDefault)}">`)}
+        ${field('Moneda', `<select name="currencyDefault">${opts(Object.keys(CURRENCIES), s.currencyDefault)}</select>`)}
+        ${field('Validez (días)', `<input name="validityDefault" type="number" min="0" step="1" value="${esc(s.validityDefault)}">`)}
+        ${field('Prefijos cot. / OT', `<div class="vat-row"><input name="quotePrefix" value="${esc(s.quotePrefix)}" maxlength="6" aria-label="Prefijo de cotización"><input name="orderPrefix" value="${esc(s.orderPrefix)}" maxlength="6" aria-label="Prefijo de orden"></div>`)}
+        ${field('Términos y notas por defecto', `<textarea name="termsDefault" rows="4" placeholder="Texto que se precarga en cada cotización nueva">${esc(s.termsDefault)}</textarea>`, 'spanall')}
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar ajustes</button></div>
+    </form>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card card-pad"><h2>Logotipo</h2>
+        <div class="logo-box">${s.logo ? `<img src="${esc(s.logo)}" alt="Logotipo">` : svgSized(LOGO_FULL)}</div>
+        <div class="small muted" style="margin-bottom:10px">${s.logo ? 'Se usa su logotipo cargado en el encabezado y en las cotizaciones.' : 'Logotipo predeterminado de Promech Service. Puede cargar otro (PNG, JPG o SVG); se reduce automáticamente.'}</div>
+        <div class="actions" style="justify-content:flex-start"><button class="btn ghost" data-act="uploadLogo">Cargar logotipo…</button>${s.logo ? '<button class="btn danger" data-act="removeLogo">Usar logotipo predeterminado</button>' : ''}</div>
+      </div>
+      <div class="card card-pad"><h2>Datos y respaldo</h2>
+        <div class="small muted" style="margin-bottom:12px">${state.clients.length} clientes · ${state.quotes.length} cotizaciones · ${state.orders.length} órdenes · ${(used/1024).toFixed(0)} KB usados.<br>${s.lastBackup ? 'Último respaldo: ' + fmtDate(s.lastBackup.slice(0,10)) : 'Sin respaldos exportados todavía.'}</div>
+        <div class="data-btns">
+          <button class="btn dark" data-act="exportData">⬇ Exportar datos (JSON)</button>
+          <button class="btn ghost" data-act="importData">⬆ Importar respaldo (JSON)</button>
+          <button class="btn ghost" data-act="loadExample">Cargar datos de ejemplo</button>
+          ${nEx ? `<button class="btn ghost" data-act="removeExample">Quitar datos de ejemplo (${nEx})</button>` : ''}
+          <button class="btn danger" data-act="clearAll">Borrar todos los datos</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function saveSettings(f){
+  const d = Object.fromEntries(new FormData(f));
+  Object.assign(state.settings, d, { vatDefault:num(d.vatDefault), validityDefault:Math.max(0, Math.round(num(d.validityDefault))),
+    quotePrefix:(d.quotePrefix||'').trim().toUpperCase() || 'PS', orderPrefix:(d.orderPrefix||'').trim().toUpperCase() || 'OT', companyName:(d.companyName||'').trim() || 'Promech Service' });
+  save(); render(); toast('Ajustes guardados');
+}
+function handleLogoFile(file){
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { alert('Seleccione un archivo de imagen.'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 800, maxH = 300; let w = img.naturalWidth || 600, h = img.naturalHeight || 200;
+      const k = Math.min(1, maxW / w, maxH / h); w = Math.round(w * k); h = Math.round(h * k);
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      let data; try { data = cv.toDataURL('image/png'); } catch(e) { data = reader.result; }
+      if (data.length > 1500000) { alert('El logotipo es demasiado grande. Use una imagen más pequeña.'); return; }
+      const prev = state.settings.logo; state.settings.logo = data;
+      if (save()) { render(); toast('Logotipo actualizado'); } else state.settings.logo = prev;
+    };
+    img.onerror = () => alert('No se pudo leer la imagen.');
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+/* ===== Respaldo (exportar / importar JSON) ===== */
+function exportData(){
+  state.settings.lastBackup = new Date().toISOString(); save();
+  const data = JSON.stringify({ app:'promech-service', exportedAt:new Date().toISOString(), ...state }, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `promech-respaldo-${todayISO()}.json`;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  toast('Respaldo exportado'); if (['inicio','ajustes'].includes(currentView())) render();
+}
+function importFile(file){
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed; try { parsed = JSON.parse(reader.result); } catch(e) { alert('El archivo no es un JSON válido.'); return; }
+    if (!parsed || !Array.isArray(parsed.clients) || !Array.isArray(parsed.quotes) || !Array.isArray(parsed.orders)) { alert('El archivo no parece un respaldo de esta aplicación.'); return; }
+    if (!confirm(`Se importarán ${parsed.clients.length} clientes, ${parsed.quotes.length} cotizaciones y ${parsed.orders.length} órdenes.\n\nEsto REEMPLAZARÁ todos los datos actuales de este navegador. ¿Continuar?`)) return;
+    state = normalize(parsed); save(); render(); toast('Respaldo importado');
+  };
+  reader.readAsText(file);
+}
+
+/* ===== Datos de ejemplo (claramente identificados, se pueden quitar) ===== */
+function loadExample(){
+  if (state.clients.some(c => c.example)) { alert('Los datos de ejemplo ya están cargados.'); return; }
+  if ((state.clients.length || state.quotes.length || state.orders.length) && !confirm('Se agregarán datos de EJEMPLO junto a sus datos actuales. Podrá quitarlos después desde Ajustes. ¿Continuar?')) return;
+  const t = todayISO(), now = new Date().toISOString(), E = {example:true, createdAt:now, updatedAt:now}, vat = state.settings.vatDefault;
+  const c1 = {...E, id:uid(), company:'Mina Ejemplo S.A.', site:'Sitio Ejemplo Norte', country:'ZA', contact:'Contacto Ejemplo 1', email:'compras@ejemplo.invalid', phone:'+27 00 000 0000', status:'Cliente activo', nextStep:'Visita técnica (ejemplo)', nextDate:addDays(t,3), notes:'Registro de EJEMPLO – puede eliminarse.'};
+  const c2 = {...E, id:uid(), company:'Cobre Ejemplo Zambia Ltd.', site:'Planta Ejemplo', country:'ZM', contact:'Contacto Ejemplo 2', email:'mantenimiento@ejemplo.invalid', phone:'+260 00 000 0000', status:'Cotizado', nextStep:'Seguimiento de cotización (ejemplo)', nextDate:addDays(t,-2), notes:'Registro de EJEMPLO.'};
+  const c3 = {...E, id:uid(), company:'Minera Demo Katanga SARL', site:'Mina Demo Sur', country:'CD', contact:'Contacto Ejemplo 3', email:'contact@ejemplo.invalid', phone:'+243 00 000 0000', status:'Prospecto', nextStep:'Primera llamada (ejemplo)', nextDate:addDays(t,7), notes:'Registro de EJEMPLO.'};
+  const q1 = {...E, id:uid(), number:commitNumber('quote'), clientId:c1.id, clientSnapshot:snapshot(c1), date:addDays(t,-20), validityDays:30, currency:'ZAR', vatEnabled:true, vatPct:vat, status:'Aceptada', terms:'Texto de ejemplo para términos y condiciones.',
+    items:[{desc:'Ejemplo: mecanizado de eje de transmisión', qty:2, unit:'ud', price:8500}, {desc:'Ejemplo: tratamiento térmico', qty:1, unit:'lote', price:3200}]};
+  const q2 = {...E, id:uid(), number:commitNumber('quote'), clientId:c2.id, clientSnapshot:snapshot(c2), date:addDays(t,-5), validityDays:30, currency:'USD', vatEnabled:false, vatPct:vat, status:'Enviada', terms:'',
+    items:[{desc:'Ejemplo: servicio en sitio – inspección de trituradora', qty:3, unit:'día', price:950}]};
+  const o1 = {...E, id:uid(), number:commitNumber('order'), clientId:c1.id, clientSnapshot:snapshot(c1), quoteId:q1.id, description:'Ejemplo: mecanizado de eje de transmisión', material:'EN19 (ejemplo)', quantity:2, technician:'Técnico Ejemplo A', priority:'Alta', receivedDate:addDays(t,-15), dueDate:addDays(t,-1), status:'En proceso', notes:''};
+  const o2 = {...E, id:uid(), number:commitNumber('order'), clientId:c3.id, clientSnapshot:snapshot(c3), quoteId:'', description:'Ejemplo: reparación de carcasa de bomba', material:'Acero inoxidable (ejemplo)', quantity:1, technician:'Técnico Ejemplo B', priority:'Normal', receivedDate:addDays(t,-2), dueDate:addDays(t,10), status:'Recibida', notes:''};
+  state.clients.push(c1, c2, c3); state.quotes.push(q1, q2); state.orders.push(o1, o2);
+  save(); render(); toast('Datos de ejemplo cargados');
+}
+function removeExample(){
+  if (!confirm('¿Quitar todos los registros marcados como «Ejemplo»?')) return;
+  state.clients = state.clients.filter(x => !x.example); state.quotes = state.quotes.filter(x => !x.example); state.orders = state.orders.filter(x => !x.example);
+  save(); render(); toast('Datos de ejemplo eliminados');
+}
+function clearAll(){
+  if (!confirm('¿Borrar TODOS los clientes, cotizaciones y órdenes de este navegador? Se recomienda exportar un respaldo antes.')) return;
+  if ((prompt('Escriba BORRAR para confirmar') || '').trim().toUpperCase() !== 'BORRAR') return;
+  const settings = state.settings; state = defaultState(); state.settings = {...state.settings, ...settings}; save(); render(); toast('Datos borrados');
+}
+
+/* ===== Ventana modal ===== */
+function openModal(title, bodyHTML, {wide=false, onSave, saveLabel='Guardar'} = {}){
+  $('#modal-root').innerHTML = `<div class="modal-backdrop"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="modal-head"><h2>${esc(title)}</h2><button type="button" class="icon-btn" data-act="closeModal" aria-label="Cerrar">×</button></div>
+    <form id="modal-form"><div class="modal-body">${bodyHTML}</div>
+    <div class="modal-foot"><button type="button" class="btn ghost" data-act="closeModal">Cancelar</button><button type="submit" class="btn primary">${esc(saveLabel)}</button></div></form></div></div>`;
+  document.body.classList.add('modal-open');
+  const f = $('#modal-form');
+  f.addEventListener('submit', e => { e.preventDefault(); if (onSave(f) !== false) closeModal(); });
+  setTimeout(() => { const el = f.querySelector('input:not([disabled]),select,textarea'); if (el && window.matchMedia('(min-width: 761px)').matches) el.focus(); }, 30);
+}
+function closeModal(){ $('#modal-root').innerHTML = ''; document.body.classList.remove('modal-open'); }
+
+/* ===== Eventos ===== */
+const ACTIONS = {
+  newClient: () => openClientForm(), editClient: id => openClientForm(id), delClient: deleteClient,
+  quoteForClient: id => openQuoteForm(null, {clientId:id}),
+  newQuote: () => openQuoteForm(), editQuote: id => openQuoteForm(id), delQuote: deleteQuote, dupQuote: duplicateQuote,
+  pdfQuote: id => openQuotePrint(id), quoteToOrder,
+  newOrder: () => openOrderForm(), editOrder: id => openOrderForm(id), delOrder: deleteOrder,
+  addItem: () => { $('#items').insertAdjacentHTML('beforeend', itemRow({qty:1, unit:'ud'})); updateQuoteTotals(); $$('#items .i-desc').pop().focus(); },
+  delItem: (id, b) => { const rows = $$('#items .item-row');
+    if (rows.length <= 1) { $('.i-desc',rows[0]).value = ''; $('.i-qty',rows[0]).value = 1; $('.i-unit',rows[0]).value = 'ud'; $('.i-price',rows[0]).value = ''; }
+    else b.closest('.item-row').remove();
+    updateQuoteTotals(); },
+  closeModal, printNow: () => window.print(), closePrint,
+  exportData, importData: () => { const i = $('#import-file'); i.value = ''; i.click(); },
+  uploadLogo: () => { const i = $('#logo-file'); i.value = ''; i.click(); },
+  removeLogo: () => { state.settings.logo = ''; save(); render(); toast('Se usa el logotipo predeterminado'); },
+  loadExample, removeExample, clearAll,
+  filterClients: st => { Object.assign(ui, {clientStatus:st || '', clientCountry:'', clientQ:''}); if (currentView() === 'clientes') render(); },
+  filterOpenQuotes: () => { Object.assign(ui, {quoteStatus:'__open', quoteQ:''}); },
+  filterOpenOrders: () => { Object.assign(ui, {orderStatus:'__open', orderQ:'', orderOnlyOverdue:false}); },
+  filterOverdue: () => { Object.assign(ui, {orderOnlyOverdue:true, orderStatus:'', orderQ:''}); },
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const fn = ACTIONS[b.dataset.act]; if (!fn) return;
+  if (b.tagName !== 'A') e.preventDefault();
+  fn(b.dataset.id, b, e);
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.change === 'quoteStatus') setQuoteStatus(t.dataset.id, t.value);
+  if (t.dataset.change === 'orderStatus') setOrderStatus(t.dataset.id, t.value);
+  if (t.dataset.filter) { ui[t.dataset.filter] = t.type === 'checkbox' ? t.checked : t.value; refreshList(); }
+});
+document.addEventListener('input', e => { const t = e.target; if (t.dataset.filter && t.type !== 'checkbox') { ui[t.dataset.filter] = t.value; refreshList(); } });
+document.addEventListener('submit', e => { if (e.target.id === 'settings-form') { e.preventDefault(); saveSettings(e.target); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('#modal-root').innerHTML) closeModal(); else if (document.body.classList.contains('print-mode')) closePrint(); } });
+$('#import-file').addEventListener('change', e => importFile(e.target.files[0]));
+$('#logo-file').addEventListener('change', e => handleLogoFile(e.target.files[0]));
+window.addEventListener('hashchange', () => { if (document.body.classList.contains('print-mode')) closePrint(); closeModal(); render(); window.scrollTo(0,0); });
+window.addEventListener('storage', e => { if (e.key === LS_KEY) { state = load(); render(); } });
+
+$('#favicon').href = 'data:image/svg+xml,' + encodeURIComponent(LOGO_MARK);
+/* PWA: registrar el service worker solo cuando se sirve por http(s) (no al abrir el archivo desde el disco) */
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.info('Service worker no registrado:', err && err.message)); });
+}
+render();
+</script>
+</body>
+</html>
