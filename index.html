@@ -150,7 +150,9 @@ body.locked #auth-root{display:block}
 .auth-top svg{width:200px;height:auto;display:block}
 .auth-top select{width:auto;font-size:13px;padding:5px 6px}
 .auth-card h1{font-size:24px;margin:4px 0 4px}
-.auth-card .grid{margin-top:14px}
+.auth-card .grid{margin-top:14px;grid-template-columns:minmax(0,1fr)}
+.auth-card .chk{white-space:normal;align-items:flex-start;line-height:1.35}
+.auth-card .chk input{margin-top:2px;flex:0 0 auto}
 .auth-err{color:var(--red);font-weight:600;font-size:13.5px;min-height:20px;margin-top:8px}
 .auth-note{font-size:12px;color:var(--muted);margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
 .notice{background:var(--blue-soft);color:#1e3a5f;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:12px}
@@ -274,6 +276,12 @@ table.doc-items .r{text-align:right;white-space:nowrap}
   .doc-company{text-align:left}
   .doc-logo svg{width:200px}
   .doc-titlebar{flex-direction:column;gap:8px}
+}
+@media screen and (max-width:760px){
+  table.doc-items{font-size:10.5px}
+  table.doc-items th{padding:6px 4px;font-size:9px;letter-spacing:0}
+  table.doc-items td{padding:6px 4px}
+  table.doc-items th:first-child,table.doc-items td:first-child{width:14px !important}
 }
 @media (max-width:520px){ .btn.hdr .lo-t{display:none} .btn.hdr .lo-i{display:block} .btn.hdr{padding:6px 7px} }
 @media (max-width:420px){

@@ -1,5 +1,5 @@
 /* Service worker de Promech Service – caché primero, con nombre de caché versionado (se regenera en cada publicación). */
-const CACHE = 'promech-eb36cd60c4';
+const CACHE = 'promech-5b41c241ac';
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./icons/icon.svg"];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
