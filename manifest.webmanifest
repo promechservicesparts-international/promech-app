@@ -1,8 +1,8 @@
 {
   "name": "Promech Service",
   "short_name": "Promech",
-  "description": "Clientes, cotizaciones y órdenes de trabajo – Promech Service",
-  "lang": "es",
+  "description": "Promech Service – Clients, quotes & work orders · Clientes, cotizaciones y órdenes de trabajo · Clients, devis et ordres de travail · Clientes, orçamentos e ordens de trabalho",
+  "lang": "en",
   "dir": "ltr",
   "start_url": "./",
   "scope": "./",
